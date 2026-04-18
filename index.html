@@ -418,7 +418,7 @@
               <th>연락처</th>
               <th>기</th>
               <th>프로그램</th>
-              <th>기타(문의사항등)</th>
+              <th>기타(문의사항 등)</th>
               <th>신청일</th>
               <th>관리</th>
             </tr>
@@ -789,7 +789,7 @@ function renderPrograms() {
         </div>
         <div class="form-group"><label>소속학교 *</label><input type="text" id="f-school" placeholder="OO중학교"/></div>
         <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000" inputmode="numeric" maxlength="13"/></div>
-        <div class="form-group"><label>기타(문의사항등)</label><textarea id="f-etcNote" placeholder="문의사항이나 전달할 내용을 입력해주세요. (선택)"></textarea></div>
+        <div class="form-group"><label>기타(문의사항 등)</label><textarea id="f-etcNote" placeholder="(선택)"></textarea></div>
         <button class="btn btn-primary btn-block" onclick="submitApplication()">신청하기</button>
       </div>`;
       attachPhoneFormatter(applySection);
@@ -923,7 +923,7 @@ window.showEditPage = async function(docId) {
       </div>
       <div class="form-group"><label>소속학교 *</label><input type="text" id="e-school" value="${escapeHtml(app.school)}"/></div>
       <div class="form-group"><label>연락처 *</label><input type="text" id="e-phone" value="${formatPhoneNumber(app.phone)}" inputmode="numeric" maxlength="13"/></div>
-      <div class="form-group"><label>기타(문의사항등)</label><textarea id="e-etcNote" placeholder="문의사항이나 전달할 내용을 입력해주세요. (선택)">${escapeHtml(app.etcNote || '')}</textarea></div>
+      <div class="form-group"><label>기타(문의사항 등)</label><textarea id="e-etcNote" placeholder="(선택)">${escapeHtml(app.etcNote || '')}</textarea></div>
       <div id="edit-alert"></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-primary" style="flex:1" onclick="saveEdit('${docId}')">저장하기</button>
@@ -1046,7 +1046,7 @@ window.downloadCSV = function() {
     return;
   }
 
-  const header = ['번호', '이름', '지역', '소속학교', '연락처', '기', '날짜', '프로그램', '기타(문의사항등)', '신청일'];
+  const header = ['번호', '이름', '지역', '소속학교', '연락처', '기', '날짜', '프로그램', '기타(문의사항 등)', '신청일'];
   const rows = allApplications.map((a, i) => {
     const period = PERIODS.find(p => p.id === a.periodId);
     const prog = PROGRAMS.find(p => p.id === a.progId);
