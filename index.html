@@ -372,6 +372,14 @@
     line-height: 1.6;
   }
 
+  .error-list {
+    margin: 6px 0 0 18px;
+    padding: 0;
+  }
+  .error-list li {
+    margin-bottom: 4px;
+  }
+
   @media (max-width: 760px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
     .config-grid-2 { grid-template-columns: 1fr; }
@@ -645,6 +653,49 @@ function formatPhoneNumber(value) {
 
 function isValidPhoneNumber(value) {
   return /^010-\d{4}-\d{4}$/.test(String(value || ''));
+}
+
+function getApplicationValidationMessages({ name, region, school, phone }) {
+  const messages = [];
+  const allowedRegions = ['광주', '전남', '그외'];
+  const phoneDigits = String(phone || '').replace(/\D/g, '');
+
+  if (!String(name || '').trim()) {
+    messages.push('이름을 입력해주세요.');
+  }
+
+  if (!String(region || '').trim()) {
+    messages.push('지역을 선택해주세요.');
+  } else if (!allowedRegions.includes(region)) {
+    messages.push('지역은 광주, 전남, 그외 중에서 선택해주세요.');
+  }
+
+  if (!String(school || '').trim()) {
+    messages.push('소속학교를 입력해주세요.');
+  }
+
+  if (!String(phone || '').trim()) {
+    messages.push('연락처를 입력해주세요.');
+  } else if (!phoneDigits.startsWith('010')) {
+    messages.push('연락처는 010으로 시작해야 합니다.');
+  } else if (phoneDigits.length !== 11) {
+    messages.push('연락처는 숫자 11자리를 모두 입력해주세요.');
+  } else if (!isValidPhoneNumber(phone)) {
+    messages.push('연락처는 010-1234-1234 형식으로 입력해주세요.');
+  }
+
+  return messages;
+}
+
+function renderValidationAlert(title, messages) {
+  return `
+    <div class="alert alert-error">
+      <div style="font-weight:700; margin-bottom:6px;">${escapeHtml(title)}</div>
+      <ul class="error-list">
+        ${messages.map(message => `<li>${escapeHtml(message)}</li>`).join('')}
+      </ul>
+    </div>
+  `;
 }
 
 function attachPhoneFormatter(scope = document) {
@@ -1034,13 +1085,9 @@ window.submitApplication = async function() {
   const etcNote = document.getElementById('f-etcNote').value.trim();
   const al = document.getElementById('home-alert');
 
-  if (!name || !region || !school || !phone) {
-    al.innerHTML = `<div class="alert alert-error">모든 필수 항목을 입력해주세요.</div>`;
-    return;
-  }
-
-  if (!isValidPhoneNumber(phone)) {
-    al.innerHTML = `<div class="alert alert-error">연락처는 010-1234-1234 형식으로 입력해주세요.</div>`;
+  const validationMessages = getApplicationValidationMessages({ name, region, school, phone });
+  if (validationMessages.length > 0) {
+    al.innerHTML = renderValidationAlert('신청할 수 없는 이유', validationMessages);
     return;
   }
 
@@ -1203,13 +1250,9 @@ window.saveEdit = async function(docId) {
   const etcNote = document.getElementById('e-etcNote').value.trim();
   const al = document.getElementById('edit-alert');
 
-  if (!name || !region || !school || !phone) {
-    al.innerHTML = `<div class="alert alert-error">모든 필수 항목을 입력해주세요.</div>`;
-    return;
-  }
-
-  if (!isValidPhoneNumber(phone)) {
-    al.innerHTML = `<div class="alert alert-error">연락처는 010-1234-1234 형식으로 입력해주세요.</div>`;
+  const validationMessages = getApplicationValidationMessages({ name, region, school, phone });
+  if (validationMessages.length > 0) {
+    al.innerHTML = renderValidationAlert('저장할 수 없는 이유', validationMessages);
     return;
   }
 
