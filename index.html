@@ -24,7 +24,8 @@
     --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }체
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
   /* NAV */
   .nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .nav-brand { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: -0.3px; }
@@ -128,9 +129,15 @@
 
   /* HERO BANNER */
   .hero { background: linear-gradient(135deg, var(--primary) 0%, #1976d2 100%);
-    border-radius: var(--radius); padding: 24px 20px; margin-bottom: 20px; color: #fff; }
-  .hero-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
-  .hero-sub { font-size: 13px; opacity: 0.85; line-height: 1.6; }
+    border-radius: var(--radius); padding: 40px 24px 36px; margin-bottom: 20px; color: #fff; text-align: center; }
+  .hero-title { font-size: 30px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .hero-sub { font-size: 14px; opacity: 0.88; line-height: 1.8; margin-bottom: 28px; }
+  .hero-login-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff;
+    color: var(--primary); font-size: 17px; font-weight: 700; padding: 14px 40px;
+    border-radius: 40px; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    transition: all 0.15s; font-family: inherit; }
+  .hero-login-btn:hover { background: #eef3ff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.22); }
+  .hero-logged { font-size: 13px; opacity: 0.85; margin-top: 8px; }
 
   /* LOADING */
   .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
@@ -168,8 +175,15 @@
   <!-- HOME -->
   <div id="page-home" class="page active">
     <div class="hero">
-      <div class="hero-title">공방 체험학습 프로그램 신청</div>
+      <div class="hero-title">🌿 공방 체험학습<br>프로그램 신청</div>
       <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램 최대 7명, 선착순 마감됩니다.</div>
+      <div id="hero-login-area">
+        <button class="hero-login-btn" onclick="showPage('login')">🔐 로그인 / 회원가입</button>
+        <div class="hero-logged">신청하려면 로그인이 필요합니다</div>
+      </div>
+      <div id="hero-logged-area" style="display:none;">
+        <div class="hero-logged" id="hero-logged-msg"></div>
+      </div>
     </div>
     <div id="home-alert"></div>
     <div id="home-loading" class="loading"><div class="spinner"></div>데이터 불러오는 중...</div>
@@ -225,12 +239,12 @@
         <div style="font-size:12px; color:var(--text-muted); line-height:1.8; max-height:160px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; background:#fff; margin-bottom:12px;">
           이와 관련하여 아래와 같이 귀하의 개인정보를 수집 및 이용 내용을 개인정보보호법 제15조(개인정보의 수집·이용) 및 통계법 33조(비밀의 보호 등)에 의거하여 안내 드리니 확인하여 주시기 바랍니다.<br><br>
           <strong>□ 개인정보의 수집·이용 목적</strong><br>
-          솔가람고등학교 공방 체험 접수를 위한 개인 정보 수집<br><br>
+          솔가람고등학교 공방 체험학습 신청 접수를 위한 개인 정보 수집<br><br>
           <strong>□ 수집하려는 개인정보의 필수 항목</strong><br>
           성명, 재적교, 연락처, 주거 지역 등<br><br>
           <strong>□ 개인정보의 보유 및 이용 기간</strong><br>
-          공방 체험 실시 후 1개월 이내 폐기<br><br>
-          ※ 개인정보보호법에 의거하여 개인정보 수집 및 이용에 따른 동의를 거부할 수 있으나, 동의를 거부할 경우 공방 체험에 참가하실 수 없습니다.
+          2027년 신입생 입학전형 실시 후 1개월 이내 폐기<br><br>
+          ※ 개인정보보호법에 의거하여 개인정보 수집 및 이용에 따른 동의를 거부할 수 있으나, 동의를 거부할 경우 공방 체험학습에 참가하실 수 없습니다.
         </div>
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--text);">
           <input type="checkbox" id="privacy-agree" style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer; margin:0;"/>
@@ -316,6 +330,7 @@ const PERIODS = [
   { id: '3', label: '3기', date: '2026년 9월 11일(금)' },
 ];
 
+
 // ====== 관리자 이메일 (본인 Gmail로 변경하세요) ======
 const ADMIN_EMAIL = 'ryurim92@gmail.com';
 
@@ -347,6 +362,19 @@ function updateNav() {
   document.getElementById('btn-mypage').style.display = (u && !isAdmin) ? '' : 'none';
   document.getElementById('btn-admin').style.display = isAdmin ? '' : 'none';
   document.getElementById('nav-user').textContent = u ? u.email.split('@')[0] + '님' : '';
+  const heroLogin = document.getElementById('hero-login-area');
+  const heroLogged = document.getElementById('hero-logged-area');
+  const heroMsg = document.getElementById('hero-logged-msg');
+  if (heroLogin && heroLogged && heroMsg) {
+    if (u) {
+      heroLogin.style.display = 'none';
+      heroLogged.style.display = '';
+      heroMsg.textContent = '✅ ' + u.email.split('@')[0] + '님, 환영합니다!';
+    } else {
+      heroLogin.style.display = '';
+      heroLogged.style.display = 'none';
+    }
+  }
 }
 
 // ====== 인증 상태 감지 ======
