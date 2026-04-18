@@ -26,38 +26,73 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* NAV */
-  .nav { background: var(--card); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
   .nav-brand { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: -0.3px; }
   .nav-right { display: flex; gap: 8px; align-items: center; }
   .nav-user { font-size: 13px; color: var(--text-muted); margin-right: 4px; }
 
-  /* CONTAINER */
   .container { max-width: 600px; margin: 0 auto; padding: 24px 16px 60px; }
 
-  /* PAGE */
   .page { display: none; }
   .page.active { display: block; }
 
-  /* CARD */
-  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; }
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
   .card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
 
-  /* FORM */
   .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
   .form-group input, .form-group select {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); font-size: 14px; font-family: inherit;
-    background: #fff; color: var(--text); transition: border-color 0.15s;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text);
+    transition: border-color 0.15s;
   }
   .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
 
-  /* BUTTONS */
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 10px 18px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
-    font-family: inherit; cursor: pointer; border: 1px solid var(--border);
-    background: #fff; color: var(--text); transition: all 0.15s; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    transition: all 0.15s;
+  }
   .btn:hover { background: var(--bg); }
   .btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
   .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); }
@@ -67,23 +102,42 @@
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* ALERT */
-  .alert { padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
+  .alert {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
   .alert-success { background: var(--success-light); color: var(--success); border: 1px solid #a5d6a7; }
   .alert-error { background: var(--danger-light); color: var(--danger); border: 1px solid #ef9a9a; }
   .alert-info { background: var(--primary-light); color: var(--primary); border: 1px solid #90caf9; }
   .alert-warning { background: var(--warning-light); color: #e65100; border: 1px solid #ffcc80; }
 
-  /* TABS */
   .tab-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .tab { padding: 7px 14px; border-radius: 20px; border: 1px solid var(--border);
-    font-size: 13px; font-weight: 500; cursor: pointer; background: #fff; color: var(--text-muted); transition: all 0.15s; }
+  .tab {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #fff;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
   .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
   .tab-sub { font-size: 11px; opacity: 0.8; margin-left: 4px; }
 
-  /* PROGRAM CARD */
-  .prog-card { border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-    padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s; background: #fff; }
+  .prog-card {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+  }
   .prog-card:hover:not(.full) { border-color: var(--primary); background: var(--primary-light); }
   .prog-card.selected { border-color: var(--primary); background: var(--primary-light); }
   .prog-card.full { opacity: 0.55; cursor: not-allowed; }
@@ -95,60 +149,114 @@
   .prog-bar.full { background: var(--danger); }
   .prog-count-text { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-  /* BADGE */
   .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
   .badge-open { background: var(--success-light); color: var(--success); }
   .badge-full { background: var(--danger-light); color: var(--danger); }
   .badge-selected { background: var(--primary); color: #fff; }
 
-  /* INFO ROW */
-  .info-row { display: flex; justify-content: space-between; padding: 9px 0;
-    border-bottom: 1px solid var(--border); font-size: 13px; }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
   .info-row:last-child { border-bottom: none; }
   .info-label { color: var(--text-muted); min-width: 80px; }
   .info-value { font-weight: 500; color: var(--text); text-align: right; }
 
-  /* STAT */
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    text-align: center;
+  }
   .stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
   .stat-value { font-size: 22px; font-weight: 700; color: var(--primary); }
 
-  /* TABLE */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 580px; }
-  th { background: var(--bg); padding: 9px 10px; text-align: left; font-weight: 600;
-    color: var(--text-muted); border-bottom: 1px solid var(--border); }
-  td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+  th {
+    background: var(--bg);
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--bg); }
 
-  /* SECTION TITLE */
   .section-title { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
   .section-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
 
-  /* HERO BANNER */
-  .hero { background: linear-gradient(135deg, var(--primary) 0%, #1976d2 100%);
-    border-radius: var(--radius); padding: 40px 24px 36px; margin-bottom: 20px; color: #fff; text-align: center; }
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #1976d2 100%);
+    border-radius: var(--radius);
+    padding: 40px 24px 36px;
+    margin-bottom: 20px;
+    color: #fff;
+    text-align: center;
+  }
   .hero-title { font-size: 30px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px; }
   .hero-sub { font-size: 14px; opacity: 0.88; line-height: 1.8; margin-bottom: 28px; }
-  .hero-login-btn { display: inline-flex; align-items: center; gap: 8px; background: #fff;
-    color: var(--primary); font-size: 17px; font-weight: 700; padding: 14px 40px;
-    border-radius: 40px; border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.18);
-    transition: all 0.15s; font-family: inherit; }
-  .hero-login-btn:hover { background: #eef3ff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.22); }
+  .hero-login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 17px;
+    font-weight: 700;
+    padding: 14px 40px;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .hero-login-btn:hover {
+    background: #eef3ff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+  }
   .hero-logged { font-size: 13px; opacity: 0.85; margin-top: 8px; }
 
-  /* LOADING */
   .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
-  .spinner { width: 28px; height: 28px; border: 3px solid var(--border);
-    border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  .spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 12px;
+  }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* DIVIDER */
-  .divider { text-align: center; font-size: 12px; color: var(--text-muted); margin: 12px 0;
-    display: flex; align-items: center; gap: 8px; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .divider {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 
   @media (max-width: 480px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -158,7 +266,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav">
   <div class="nav-brand">🌿 체험학습 신청</div>
   <div class="nav-right">
@@ -172,7 +279,6 @@
 
 <div class="container">
 
-  <!-- HOME -->
   <div id="page-home" class="page">
     <div class="hero">
       <div class="hero-title">🌿솔가람고등학교 공방 체험학습<br>프로그램 신청</div>
@@ -185,34 +291,21 @@
         <div class="hero-logged" id="hero-logged-msg"></div>
       </div>
     </div>
+
     <div id="home-alert"></div>
     <div id="home-loading" class="loading"><div class="spinner"></div>데이터 불러오는 중...</div>
+
     <div id="home-content" style="display:none">
       <div class="card-title" style="font-size:14px; font-weight:600; margin-bottom:8px; color:var(--text-muted)">▸ 기(期) 선택</div>
       <div class="tab-row" id="period-tabs"></div>
+
       <div class="card-title" style="font-size:14px; font-weight:600; margin-bottom:8px; color:var(--text-muted)">▸ 프로그램 선택</div>
       <div id="program-list"></div>
-      <div id="apply-section" style="display:none">
-        <div class="card">
-          <div class="card-title">신청자 정보</div>
-          <div class="form-group"><label>이름 *</label><input type="text" id="f-name" placeholder="홍길동"/></div>
-          <div class="form-group"><label>지역 *</label>
-            <select id="f-region">
-              <option value="">선택하세요</option>
-              <option value="광주">광주</option>
-              <option value="전남">전남</option>
-              <option value="그외">그외</option>
-            </select>
-          </div>
-          <div class="form-group"><label>소속학교 *</label><input type="text" id="f-school" placeholder="OO중학교"/></div>
-          <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000"/></div>
-          <button class="btn btn-primary btn-block" id="btn-apply" onclick="submitApplication()">신청하기</button>
-        </div>
-      </div>
+
+      <div id="apply-section" style="display:none"></div>
     </div>
   </div>
 
-  <!-- LOGIN -->
   <div id="page-login" class="page">
     <div class="section-title">로그인</div>
     <div class="section-sub">체험학습 신청을 위해 로그인이 필요합니다.</div>
@@ -226,7 +319,6 @@
     </div>
   </div>
 
-  <!-- SIGNUP -->
   <div id="page-signup" class="page">
     <div class="section-title">회원가입</div>
     <div class="section-sub">이메일과 비밀번호로 계정을 만들어주세요.</div>
@@ -234,6 +326,7 @@
       <div class="form-group"><label>이메일 *</label><input type="email" id="signup-email" placeholder="이메일 주소"/></div>
       <div class="form-group"><label>비밀번호 * (6자 이상)</label><input type="password" id="signup-pw" placeholder="비밀번호"/></div>
       <div class="form-group"><label>비밀번호 확인 *</label><input type="password" id="signup-pw2" placeholder="비밀번호 재입력"/></div>
+
       <div style="border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:14px; background:#fafafa;">
         <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:10px;">개인정보 수집·이용 동의 (필수)</div>
         <div style="font-size:12px; color:var(--text-muted); line-height:1.8; max-height:160px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; background:#fff; margin-bottom:12px;">
@@ -251,13 +344,13 @@
           위 개인정보 수집·이용에 동의합니다.
         </label>
       </div>
+
       <div id="signup-alert"></div>
       <button class="btn btn-primary btn-block" onclick="doSignup()" style="margin-bottom:10px">가입하기</button>
       <button class="btn btn-block" onclick="showPage('login')">로그인으로 돌아가기</button>
     </div>
   </div>
 
-  <!-- MYPAGE -->
   <div id="page-mypage" class="page">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
       <div>
@@ -269,14 +362,12 @@
     <div id="mypage-content"></div>
   </div>
 
-  <!-- EDIT -->
   <div id="page-edit" class="page">
     <div class="section-title">신청 정보 변경</div>
     <div class="section-sub">기(期), 프로그램, 개인정보를 변경할 수 있습니다.</div>
     <div id="edit-content"></div>
   </div>
 
-  <!-- ADMIN -->
   <div id="page-admin" class="page">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
       <div class="section-title" style="margin-bottom:0">관리자 대시보드</div>
@@ -288,9 +379,19 @@
     <div class="card" style="padding:0; overflow:hidden;">
       <div class="table-wrap">
         <table>
-          <thead><tr>
-            <th>#</th><th>이름</th><th>지역</th><th>소속학교</th><th>연락처</th><th>기</th><th>프로그램</th><th>신청일</th><th>관리</th>
-          </tr></thead>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>이름</th>
+              <th>지역</th>
+              <th>소속학교</th>
+              <th>연락처</th>
+              <th>기</th>
+              <th>프로그램</th>
+              <th>신청일</th>
+              <th>관리</th>
+            </tr>
+          </thead>
           <tbody id="admin-tbody"></tbody>
         </table>
       </div>
@@ -299,15 +400,26 @@
 
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ====== Firebase 설정 ======
 const firebaseConfig = {
   apiKey: "AIzaSyDMwVDqbLoYUzOvOWanlC4weCn890-hlbo",
   authDomain: "solgaramex26.firebaseapp.com",
@@ -318,19 +430,18 @@ const firebaseConfig = {
   measurementId: "G-GDGE8PBVV6"
 };
 
-// ====== 프로그램 데이터 (수정 가능) ======
 const PROGRAMS = [
   { id: 'A', name: '식품가공 공방', desc: '제과 제빵 체험', max: 7 },
   { id: 'B', name: '목공 공방', desc: '도마 만들기', max: 7 },
   { id: 'C', name: '도예 공방', desc: '키링 만들기', max: 7 },
 ];
+
 const PERIODS = [
   { id: '1', label: '1기', date: '2026년 5월 16일(금)' },
   { id: '2', label: '2기', date: '2026년 6월 13일(금)' },
   { id: '3', label: '3기', date: '2026년 9월 11일(금)' },
 ];
 
-// ====== 관리자 이메일 (본인 Gmail로 변경하세요) ======
 const ADMIN_EMAIL = 'ryurim92@gmail.com';
 
 const app = initializeApp(firebaseConfig);
@@ -345,10 +456,53 @@ let allApplications = [];
 let adminPeriodFilter = 'all';
 let adminProgFilter = 'all';
 
-// ====== 페이지 전환 / 새로고침 유지 ======
 const PAGE_NAMES = ['home', 'login', 'signup', 'mypage', 'edit', 'admin'];
 const SAFE_RESTORE_PAGES = ['home', 'login', 'signup', 'mypage', 'admin'];
 const PAGE_STORAGE_KEY = 'fieldtrip_current_page';
+
+function formatPhoneNumber(value) {
+  const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
+function isValidPhoneNumber(value) {
+  return /^010-\d{4}-\d{4}$/.test(String(value || ''));
+}
+
+function attachPhoneFormatter(scope = document) {
+  const targets = scope.querySelectorAll('#f-phone, #e-phone');
+
+  targets.forEach(input => {
+    if (input.dataset.phoneBound === '1') return;
+
+    input.dataset.phoneBound = '1';
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('maxlength', '13');
+    input.setAttribute('autocomplete', 'tel');
+
+    input.addEventListener('input', (e) => {
+      e.target.value = formatPhoneNumber(e.target.value);
+    });
+
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text');
+      e.target.value = formatPhoneNumber(pasted);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const allowKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+      if (allowKeys.includes(e.key)) return;
+      if (/^\d$/.test(e.key)) return;
+      e.preventDefault();
+    });
+
+    input.value = formatPhoneNumber(input.value);
+  });
+}
 
 function getSavedPage() {
   const hashPage = location.hash.replace('#', '');
@@ -425,7 +579,6 @@ function updateNav() {
   }
 }
 
-// ====== 인증 상태 감지 ======
 onAuthStateChanged(auth, user => {
   currentUser = user;
   isAdmin = user ? user.email === ADMIN_EMAIL : false;
@@ -441,7 +594,6 @@ onAuthStateChanged(auth, user => {
   if ((currentPageEl.id === 'page-mypage' || currentPageEl.id === 'page-edit') && !user) showPage('login');
 });
 
-// ====== 로그인 / 회원가입 ======
 window.doLogin = async function() {
   const email = document.getElementById('login-email').value.trim();
   const pw = document.getElementById('login-pw').value;
@@ -492,7 +644,6 @@ window.doLogout = async function() {
   showPage('home');
 };
 
-// ====== 신청 데이터 로드 ======
 async function loadApplications() {
   const snap = await getDocs(collection(db, 'applications'));
   allApplications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -511,7 +662,6 @@ function getUserApp() {
   return allApplications.find(a => a.userId === currentUser.uid) || null;
 }
 
-// ====== HOME ======
 async function initHome() {
   document.getElementById('home-loading').style.display = 'block';
   document.getElementById('home-content').style.display = 'none';
@@ -585,12 +735,18 @@ function renderPrograms() {
         <div class="card-title">신청자 정보</div>
         <div class="form-group"><label>이름 *</label><input type="text" id="f-name" placeholder="홍길동"/></div>
         <div class="form-group"><label>지역 *</label>
-          <select id="f-region"><option value="">선택하세요</option><option value="광주">광주</option><option value="전남">전남</option><option value="그외">그외</option></select>
+          <select id="f-region">
+            <option value="">선택하세요</option>
+            <option value="광주">광주</option>
+            <option value="전남">전남</option>
+            <option value="그외">그외</option>
+          </select>
         </div>
         <div class="form-group"><label>소속학교 *</label><input type="text" id="f-school" placeholder="OO중학교"/></div>
-        <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000"/></div>
+        <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000" inputmode="numeric" maxlength="13"/></div>
         <button class="btn btn-primary btn-block" onclick="submitApplication()">신청하기</button>
       </div>`;
+      attachPhoneFormatter(applySection);
       applySection.style.display = '';
     }
   } else {
@@ -616,6 +772,11 @@ window.submitApplication = async function() {
     return;
   }
 
+  if (!isValidPhoneNumber(phone)) {
+    al.innerHTML = `<div class="alert alert-error">연락처는 010-1234-1234 형식으로 입력해주세요.</div>`;
+    return;
+  }
+
   if (isFull(selectedPeriod, selectedProgram)) {
     al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 방금 마감되었습니다.</div>`;
     return;
@@ -628,7 +789,10 @@ window.submitApplication = async function() {
   try {
     await addDoc(collection(db, 'applications'), {
       userId: currentUser.uid,
-      name, region, school, phone,
+      name,
+      region,
+      school,
+      phone,
       periodId: selectedPeriod,
       progId: selectedProgram,
       createdAt: serverTimestamp(),
@@ -642,7 +806,6 @@ window.submitApplication = async function() {
   }
 };
 
-// ====== MYPAGE ======
 async function renderMypage() {
   const content = document.getElementById('mypage-content');
 
@@ -709,7 +872,7 @@ window.showEditPage = async function(docId) {
         </select>
       </div>
       <div class="form-group"><label>소속학교 *</label><input type="text" id="e-school" value="${app.school}"/></div>
-      <div class="form-group"><label>연락처 *</label><input type="text" id="e-phone" value="${app.phone}"/></div>
+      <div class="form-group"><label>연락처 *</label><input type="text" id="e-phone" value="${formatPhoneNumber(app.phone)}" inputmode="numeric" maxlength="13"/></div>
       <div id="edit-alert"></div>
       <div style="display:flex;gap:8px">
         <button class="btn btn-primary" style="flex:1" onclick="saveEdit('${docId}')">저장하기</button>
@@ -717,6 +880,7 @@ window.showEditPage = async function(docId) {
       </div>
     </div>`;
 
+  attachPhoneFormatter(document.getElementById('edit-content'));
   showPage('edit');
 };
 
@@ -734,6 +898,11 @@ window.saveEdit = async function(docId) {
     return;
   }
 
+  if (!isValidPhoneNumber(phone)) {
+    al.innerHTML = `<div class="alert alert-error">연락처는 010-1234-1234 형식으로 입력해주세요.</div>`;
+    return;
+  }
+
   const app = allApplications.find(a => a.id === docId);
   if (periodId !== app.periodId || progId !== app.progId) {
     const others = allApplications.filter(a => a.id !== docId && a.periodId === periodId && a.progId === progId);
@@ -747,7 +916,6 @@ window.saveEdit = async function(docId) {
   showPage('mypage');
 };
 
-// ====== ADMIN ======
 async function initAdmin() {
   await loadApplications();
   renderAdmin();
@@ -784,8 +952,14 @@ function renderAdmin() {
     const prog = PROGRAMS.find(p => p.id === a.progId);
     const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
     return `<tr>
-      <td>${i + 1}</td><td>${a.name}</td><td>${a.region}</td><td>${a.school}</td><td>${a.phone}</td>
-      <td>${period?.label || '-'}</td><td>${prog ? prog.id + ': ' + prog.name : '-'}</td><td>${date}</td>
+      <td>${i + 1}</td>
+      <td>${a.name}</td>
+      <td>${a.region}</td>
+      <td>${a.school}</td>
+      <td>${a.phone}</td>
+      <td>${period?.label || '-'}</td>
+      <td>${prog ? prog.id + ': ' + prog.name : '-'}</td>
+      <td>${date}</td>
       <td><button class="btn btn-danger btn-sm" onclick="adminDelete('${a.id}')">삭제</button></td>
     </tr>`;
   }).join('');
@@ -827,7 +1001,6 @@ window.downloadCSV = function() {
   URL.revokeObjectURL(url);
 };
 
-// ====== 첫 로딩 시 마지막 페이지 복원 ======
 window.showPage(getSavedPage(), false);
 </script>
 </body>
