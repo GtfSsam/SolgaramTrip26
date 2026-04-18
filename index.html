@@ -173,7 +173,7 @@
 <div class="container">
 
   <!-- HOME -->
-  <div id="page-home" class="page active">
+  <div id="page-home" class="page">
     <div class="hero">
       <div class="hero-title">🌿솔가람고등학교 공방 체험학습<br>프로그램 신청</div>
       <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램 최대 7명, 선착순 마감됩니다.</div>
@@ -304,7 +304,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp }
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ====== Firebase 설정 ======
@@ -330,7 +330,6 @@ const PERIODS = [
   { id: '3', label: '3기', date: '2026년 9월 11일(금)' },
 ];
 
-
 // ====== 관리자 이메일 (본인 Gmail로 변경하세요) ======
 const ADMIN_EMAIL = 'ryurim92@gmail.com';
 
@@ -346,14 +345,61 @@ let allApplications = [];
 let adminPeriodFilter = 'all';
 let adminProgFilter = 'all';
 
-// ====== 페이지 전환 ======
-window.showPage = function(name) {
+// ====== 페이지 전환 / 새로고침 유지 ======
+const PAGE_NAMES = ['home', 'login', 'signup', 'mypage', 'edit', 'admin'];
+const SAFE_RESTORE_PAGES = ['home', 'login', 'signup', 'mypage', 'admin'];
+const PAGE_STORAGE_KEY = 'fieldtrip_current_page';
+
+function getSavedPage() {
+  const hashPage = location.hash.replace('#', '');
+  let page = PAGE_NAMES.includes(hashPage)
+    ? hashPage
+    : sessionStorage.getItem(PAGE_STORAGE_KEY) || 'home';
+
+  if (page === 'edit') page = 'mypage';
+  if (!SAFE_RESTORE_PAGES.includes(page)) page = 'home';
+  return page;
+}
+
+function saveCurrentPage(name) {
+  sessionStorage.setItem(PAGE_STORAGE_KEY, name);
+  const nextHash = '#' + name;
+  if (location.hash !== nextHash) {
+    history.replaceState(null, '', nextHash);
+  }
+}
+
+window.showPage = function(name, shouldSave = true) {
+  if (!PAGE_NAMES.includes(name)) name = 'home';
+
+  if ((name === 'mypage' || name === 'edit') && !currentUser) {
+    name = 'login';
+  }
+
+  if (name === 'admin' && !isAdmin) {
+    name = currentUser ? 'home' : 'login';
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+
+  const pageEl = document.getElementById('page-' + name);
+  if (!pageEl) return;
+
+  pageEl.classList.add('active');
+
+  if (shouldSave) saveCurrentPage(name);
+
   if (name === 'home') initHome();
   if (name === 'mypage') renderMypage();
   if (name === 'admin') initAdmin();
 };
+
+window.addEventListener('hashchange', () => {
+  const pageFromHash = location.hash.replace('#', '');
+  if (PAGE_NAMES.includes(pageFromHash)) {
+    window.showPage(pageFromHash, false);
+  }
+});
 
 function updateNav() {
   const u = currentUser;
@@ -362,9 +408,11 @@ function updateNav() {
   document.getElementById('btn-mypage').style.display = (u && !isAdmin) ? '' : 'none';
   document.getElementById('btn-admin').style.display = isAdmin ? '' : 'none';
   document.getElementById('nav-user').textContent = u ? u.email.split('@')[0] + '님' : '';
+
   const heroLogin = document.getElementById('hero-login-area');
   const heroLogged = document.getElementById('hero-logged-area');
   const heroMsg = document.getElementById('hero-logged-msg');
+
   if (heroLogin && heroLogged && heroMsg) {
     if (u) {
       heroLogin.style.display = 'none';
@@ -382,7 +430,15 @@ onAuthStateChanged(auth, user => {
   currentUser = user;
   isAdmin = user ? user.email === ADMIN_EMAIL : false;
   updateNav();
-  if (document.getElementById('page-home').classList.contains('active')) initHome();
+
+  const currentPageEl = document.querySelector('.page.active');
+  if (!currentPageEl) return;
+
+  if (currentPageEl.id === 'page-home') initHome();
+  if (currentPageEl.id === 'page-mypage') renderMypage();
+  if (currentPageEl.id === 'page-admin' && isAdmin) initAdmin();
+  if (currentPageEl.id === 'page-admin' && !isAdmin) showPage(user ? 'home' : 'login');
+  if ((currentPageEl.id === 'page-mypage' || currentPageEl.id === 'page-edit') && !user) showPage('login');
 });
 
 // ====== 로그인 / 회원가입 ======
@@ -390,12 +446,13 @@ window.doLogin = async function() {
   const email = document.getElementById('login-email').value.trim();
   const pw = document.getElementById('login-pw').value;
   const al = document.getElementById('login-alert');
+
   try {
     await signInWithEmailAndPassword(auth, email, pw);
     al.innerHTML = '';
     if (email === ADMIN_EMAIL) showPage('admin');
     else showPage('home');
-  } catch(e) {
+  } catch (e) {
     al.innerHTML = `<div class="alert alert-error">이메일 또는 비밀번호를 확인해주세요.</div>`;
   }
 };
@@ -405,17 +462,27 @@ window.doSignup = async function() {
   const pw = document.getElementById('signup-pw').value;
   const pw2 = document.getElementById('signup-pw2').value;
   const al = document.getElementById('signup-alert');
+
   if (!document.getElementById('privacy-agree').checked) {
-    al.innerHTML = `<div class="alert alert-error">개인정보 수집·이용에 동의해주세요.</div>`; return;
+    al.innerHTML = `<div class="alert alert-error">개인정보 수집·이용에 동의해주세요.</div>`;
+    return;
   }
-  if (pw !== pw2) { al.innerHTML = `<div class="alert alert-error">비밀번호가 일치하지 않습니다.</div>`; return; }
+
+  if (pw !== pw2) {
+    al.innerHTML = `<div class="alert alert-error">비밀번호가 일치하지 않습니다.</div>`;
+    return;
+  }
+
   try {
     await createUserWithEmailAndPassword(auth, email, pw);
     al.innerHTML = `<div class="alert alert-success">가입 완료! 로그인되었습니다.</div>`;
     setTimeout(() => showPage('home'), 800);
-  } catch(e) {
-    const msg = e.code === 'auth/email-already-in-use' ? '이미 사용 중인 이메일입니다.' :
-                e.code === 'auth/weak-password' ? '비밀번호는 6자 이상이어야 합니다.' : '오류가 발생했습니다.';
+  } catch (e) {
+    const msg = e.code === 'auth/email-already-in-use'
+      ? '이미 사용 중인 이메일입니다.'
+      : e.code === 'auth/weak-password'
+      ? '비밀번호는 6자 이상이어야 합니다.'
+      : '오류가 발생했습니다.';
     al.innerHTML = `<div class="alert alert-error">${msg}</div>`;
   }
 };
@@ -434,9 +501,11 @@ async function loadApplications() {
 function getCount(periodId, progId) {
   return allApplications.filter(a => a.periodId === periodId && a.progId === progId).length;
 }
+
 function isFull(periodId, progId) {
   return getCount(periodId, progId) >= PROGRAMS.find(p => p.id === progId).max;
 }
+
 function getUserApp() {
   if (!currentUser) return null;
   return allApplications.find(a => a.userId === currentUser.uid) || null;
@@ -446,9 +515,12 @@ function getUserApp() {
 async function initHome() {
   document.getElementById('home-loading').style.display = 'block';
   document.getElementById('home-content').style.display = 'none';
+
   await loadApplications();
+
   document.getElementById('home-loading').style.display = 'none';
   document.getElementById('home-content').style.display = 'block';
+
   renderPeriodTabs();
   renderPrograms();
 }
@@ -477,7 +549,9 @@ function renderPrograms() {
     const prog = PROGRAMS.find(p => p.id === userApp.progId);
     al.innerHTML = `<div class="alert alert-success">✅ 신청 완료: ${period.label} - 프로그램 ${prog.id} (${prog.name})
       <button class="btn btn-sm" onclick="showPage('mypage')" style="margin-left:8px;">내역 보기</button></div>`;
-  } else { al.innerHTML = ''; }
+  } else {
+    al.innerHTML = '';
+  }
 
   document.getElementById('program-list').innerHTML = PROGRAMS.map(prog => {
     const cnt = getCount(selectedPeriod, prog.id);
@@ -485,6 +559,7 @@ function renderPrograms() {
     const full = cnt >= max;
     const pct = Math.round((cnt / max) * 100);
     const sel = selectedProgram === prog.id;
+
     return `<div class="prog-card ${sel ? 'selected' : ''} ${full ? 'full' : ''}"
         onclick="selectProgram('${prog.id}', ${full})">
       <div class="prog-header">
@@ -500,6 +575,7 @@ function renderPrograms() {
   }).join('');
 
   const applySection = document.getElementById('apply-section');
+
   if (selectedProgram && !userApp) {
     if (!currentUser) {
       applySection.innerHTML = `<div class="alert alert-info">신청하려면 <button class="btn btn-sm btn-primary" onclick="showPage('login')">로그인</button> 이 필요합니다.</div>`;
@@ -534,14 +610,21 @@ window.submitApplication = async function() {
   const school = document.getElementById('f-school').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
   const al = document.getElementById('home-alert');
+
   if (!name || !region || !school || !phone) {
-    al.innerHTML = `<div class="alert alert-error">모든 항목을 입력해주세요.</div>`; return;
+    al.innerHTML = `<div class="alert alert-error">모든 항목을 입력해주세요.</div>`;
+    return;
   }
+
   if (isFull(selectedPeriod, selectedProgram)) {
-    al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 방금 마감되었습니다.</div>`; return;
+    al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 방금 마감되었습니다.</div>`;
+    return;
   }
+
   const btn = document.querySelector('#apply-section button');
-  btn.disabled = true; btn.textContent = '처리 중...';
+  btn.disabled = true;
+  btn.textContent = '처리 중...';
+
   try {
     await addDoc(collection(db, 'applications'), {
       userId: currentUser.uid,
@@ -552,26 +635,37 @@ window.submitApplication = async function() {
     });
     selectedProgram = null;
     await initHome();
-  } catch(e) {
+  } catch (e) {
     al.innerHTML = `<div class="alert alert-error">오류가 발생했습니다. 다시 시도해주세요.</div>`;
-    btn.disabled = false; btn.textContent = '신청하기';
+    btn.disabled = false;
+    btn.textContent = '신청하기';
   }
 };
 
 // ====== MYPAGE ======
 async function renderMypage() {
   const content = document.getElementById('mypage-content');
-  if (!currentUser) { content.innerHTML = `<div class="alert alert-info">로그인이 필요합니다.</div>`; return; }
+
+  if (!currentUser) {
+    content.innerHTML = `<div class="alert alert-info">로그인이 필요합니다.</div>`;
+    return;
+  }
+
   content.innerHTML = `<div class="loading"><div class="spinner"></div>불러오는 중...</div>`;
   await loadApplications();
+
   const app = getUserApp();
+
   if (!app) {
     content.innerHTML = `<div class="card"><p style="color:var(--text-muted);font-size:14px;margin-bottom:14px">신청 내역이 없습니다.</p>
-      <button class="btn btn-primary btn-sm" onclick="showPage('home')">신청하러 가기</button></div>`; return;
+      <button class="btn btn-primary btn-sm" onclick="showPage('home')">신청하러 가기</button></div>`;
+    return;
   }
+
   const period = PERIODS.find(p => p.id === app.periodId);
   const prog = PROGRAMS.find(p => p.id === app.progId);
   const date = app.createdAt ? new Date(app.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
+
   content.innerHTML = `<div class="card">
     <div class="card-title">신청 정보</div>
     <div class="info-row"><span class="info-label">기(期)</span><span class="info-value">${period.label} (${period.date})</span></div>
@@ -597,20 +691,21 @@ window.cancelApp = async function(docId) {
 window.showEditPage = async function(docId) {
   const app = allApplications.find(a => a.id === docId);
   if (!app) return;
+
   document.getElementById('edit-content').innerHTML = `
     <div class="card" style="max-width:420px">
       <div class="form-group"><label>기(期) *</label>
-        <select id="e-period">${PERIODS.map(p=>`<option value="${p.id}" ${app.periodId===p.id?'selected':''}>${p.label} (${p.date})</option>`).join('')}</select>
+        <select id="e-period">${PERIODS.map(p => `<option value="${p.id}" ${app.periodId === p.id ? 'selected' : ''}>${p.label} (${p.date})</option>`).join('')}</select>
       </div>
       <div class="form-group"><label>프로그램 *</label>
-        <select id="e-prog">${PROGRAMS.map(p=>`<option value="${p.id}" ${app.progId===p.id?'selected':''}>프로그램 ${p.id}: ${p.name}</option>`).join('')}</select>
+        <select id="e-prog">${PROGRAMS.map(p => `<option value="${p.id}" ${app.progId === p.id ? 'selected' : ''}>프로그램 ${p.id}: ${p.name}</option>`).join('')}</select>
       </div>
       <div class="form-group"><label>이름 *</label><input type="text" id="e-name" value="${app.name}"/></div>
       <div class="form-group"><label>지역 *</label>
         <select id="e-region">
-          <option value="광주" ${app.region==='광주'?'selected':''}>광주</option>
-          <option value="전남" ${app.region==='전남'?'selected':''}>전남</option>
-          <option value="그외" ${app.region==='그외'?'selected':''}>그외</option>
+          <option value="광주" ${app.region === '광주' ? 'selected' : ''}>광주</option>
+          <option value="전남" ${app.region === '전남' ? 'selected' : ''}>전남</option>
+          <option value="그외" ${app.region === '그외' ? 'selected' : ''}>그외</option>
         </select>
       </div>
       <div class="form-group"><label>소속학교 *</label><input type="text" id="e-school" value="${app.school}"/></div>
@@ -621,6 +716,7 @@ window.showEditPage = async function(docId) {
         <button class="btn" style="flex:1" onclick="showPage('mypage')">취소</button>
       </div>
     </div>`;
+
   showPage('edit');
 };
 
@@ -632,14 +728,21 @@ window.saveEdit = async function(docId) {
   const school = document.getElementById('e-school').value.trim();
   const phone = document.getElementById('e-phone').value.trim();
   const al = document.getElementById('edit-alert');
-  if (!name || !region || !school || !phone) { al.innerHTML = `<div class="alert alert-error">모든 항목을 입력해주세요.</div>`; return; }
+
+  if (!name || !region || !school || !phone) {
+    al.innerHTML = `<div class="alert alert-error">모든 항목을 입력해주세요.</div>`;
+    return;
+  }
+
   const app = allApplications.find(a => a.id === docId);
   if (periodId !== app.periodId || progId !== app.progId) {
     const others = allApplications.filter(a => a.id !== docId && a.periodId === periodId && a.progId === progId);
     if (others.length >= PROGRAMS.find(p => p.id === progId).max) {
-      al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 마감되었습니다.</div>`; return;
+      al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 마감되었습니다.</div>`;
+      return;
     }
   }
+
   await updateDoc(doc(db, 'applications', docId), { periodId, progId, name, region, school, phone });
   showPage('mypage');
 };
@@ -652,17 +755,19 @@ async function initAdmin() {
 
 function renderAdmin() {
   const apps = allApplications;
+
   const statGrid = document.getElementById('admin-stats');
-  statGrid.innerHTML = `<div class="stat-card"><div class="stat-label">전체</div><div class="stat-value">${apps.length}</div></div>` +
-    PERIODS.map(p => `<div class="stat-card"><div class="stat-label">${p.label}</div><div class="stat-value">${apps.filter(a=>a.periodId===p.id).length}</div></div>`).join('');
+  statGrid.innerHTML =
+    `<div class="stat-card"><div class="stat-label">전체</div><div class="stat-value">${apps.length}</div></div>` +
+    PERIODS.map(p => `<div class="stat-card"><div class="stat-label">${p.label}</div><div class="stat-value">${apps.filter(a => a.periodId === p.id).length}</div></div>`).join('');
 
   document.getElementById('admin-period-tabs').innerHTML =
-    `<div class="tab ${adminPeriodFilter==='all'?'active':''}" onclick="setAdminFilter('period','all')">전체 기수</div>` +
-    PERIODS.map(p=>`<div class="tab ${adminPeriodFilter===p.id?'active':''}" onclick="setAdminFilter('period','${p.id}')">${p.label}</div>`).join('');
+    `<div class="tab ${adminPeriodFilter === 'all' ? 'active' : ''}" onclick="setAdminFilter('period','all')">전체 기수</div>` +
+    PERIODS.map(p => `<div class="tab ${adminPeriodFilter === p.id ? 'active' : ''}" onclick="setAdminFilter('period','${p.id}')">${p.label}</div>`).join('');
 
   document.getElementById('admin-prog-tabs').innerHTML =
-    `<div class="tab ${adminProgFilter==='all'?'active':''}" onclick="setAdminFilter('prog','all')">전체 프로그램</div>` +
-    PROGRAMS.map(p=>`<div class="tab ${adminProgFilter===p.id?'active':''}" onclick="setAdminFilter('prog','${p.id}')">${p.id}: ${p.name}</div>`).join('');
+    `<div class="tab ${adminProgFilter === 'all' ? 'active' : ''}" onclick="setAdminFilter('prog','all')">전체 프로그램</div>` +
+    PROGRAMS.map(p => `<div class="tab ${adminProgFilter === p.id ? 'active' : ''}" onclick="setAdminFilter('prog','${p.id}')">${p.id}: ${p.name}</div>`).join('');
 
   let filtered = apps;
   if (adminPeriodFilter !== 'all') filtered = filtered.filter(a => a.periodId === adminPeriodFilter);
@@ -670,15 +775,17 @@ function renderAdmin() {
 
   const tbody = document.getElementById('admin-tbody');
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px">신청 내역이 없습니다.</td></tr>`; return;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px">신청 내역이 없습니다.</td></tr>`;
+    return;
   }
+
   tbody.innerHTML = filtered.map((a, i) => {
-    const period = PERIODS.find(p=>p.id===a.periodId);
-    const prog = PROGRAMS.find(p=>p.id===a.progId);
+    const period = PERIODS.find(p => p.id === a.periodId);
+    const prog = PROGRAMS.find(p => p.id === a.progId);
     const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
     return `<tr>
-      <td>${i+1}</td><td>${a.name}</td><td>${a.region}</td><td>${a.school}</td><td>${a.phone}</td>
-      <td>${period?.label||'-'}</td><td>${prog ? prog.id+': '+prog.name : '-'}</td><td>${date}</td>
+      <td>${i + 1}</td><td>${a.name}</td><td>${a.region}</td><td>${a.school}</td><td>${a.phone}</td>
+      <td>${period?.label || '-'}</td><td>${prog ? prog.id + ': ' + prog.name : '-'}</td><td>${date}</td>
       <td><button class="btn btn-danger btn-sm" onclick="adminDelete('${a.id}')">삭제</button></td>
     </tr>`;
   }).join('');
@@ -697,21 +804,31 @@ window.adminDelete = async function(docId) {
 };
 
 window.downloadCSV = function() {
-  if (allApplications.length === 0) { alert('다운로드할 데이터가 없습니다.'); return; }
+  if (allApplications.length === 0) {
+    alert('다운로드할 데이터가 없습니다.');
+    return;
+  }
+
   const header = ['번호','이름','지역','소속학교','연락처','기','날짜','프로그램','신청일'];
   const rows = allApplications.map((a, i) => {
-    const period = PERIODS.find(p=>p.id===a.periodId);
-    const prog = PROGRAMS.find(p=>p.id===a.progId);
-    const date = a.createdAt ? new Date(a.createdAt.seconds*1000).toLocaleDateString('ko-KR') : '-';
-    return [i+1, a.name, a.region, a.school, a.phone, period?.label||'-', period?.date||'-', prog ? prog.id+': '+prog.name : '-', date].join(',');
+    const period = PERIODS.find(p => p.id === a.periodId);
+    const prog = PROGRAMS.find(p => p.id === a.progId);
+    const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
+    return [i + 1, a.name, a.region, a.school, a.phone, period?.label || '-', period?.date || '-', prog ? prog.id + ': ' + prog.name : '-', date].join(',');
   });
+
   const csv = '\uFEFF' + [header.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const el = document.createElement('a');
-  el.href = url; el.download = '체험학습_신청자명단.csv'; el.click();
+  el.href = url;
+  el.download = '체험학습_신청자명단.csv';
+  el.click();
   URL.revokeObjectURL(url);
 };
+
+// ====== 첫 로딩 시 마지막 페이지 복원 ======
+window.showPage(getSavedPage(), false);
 </script>
 </body>
 </html>
