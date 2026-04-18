@@ -14,6 +14,7 @@
     --success-light: #e8f5e9;
     --danger: #c62828;
     --danger-light: #ffebee;
+    --warning: #ef6c00;
     --warning-light: #fff8e1;
     --border: #e0e0e0;
     --text: #1a1a1a;
@@ -23,8 +24,14 @@
     --radius: 12px;
     --radius-sm: 8px;
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
   .nav {
     background: var(--card);
@@ -39,10 +46,14 @@
     z-index: 100;
   }
   .nav-brand { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: -0.3px; }
-  .nav-right { display: flex; gap: 8px; align-items: center; }
+  .nav-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .nav-user { font-size: 13px; color: var(--text-muted); margin-right: 4px; }
 
-  .container { max-width: 700px; margin: 0 auto; padding: 24px 16px 60px; }
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
 
   .page { display: none; }
   .page.active { display: block; }
@@ -54,7 +65,12 @@
     padding: 20px;
     margin-bottom: 16px;
   }
-  .card-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
 
   .form-group { margin-bottom: 14px; }
   .form-group label {
@@ -78,7 +94,7 @@
     transition: border-color 0.15s;
   }
   .form-group textarea {
-    min-height: 100px;
+    min-height: 96px;
     resize: vertical;
     line-height: 1.5;
   }
@@ -119,14 +135,19 @@
     border-radius: var(--radius-sm);
     font-size: 13px;
     margin-bottom: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
   .alert-success { background: var(--success-light); color: var(--success); border: 1px solid #a5d6a7; }
   .alert-error { background: var(--danger-light); color: var(--danger); border: 1px solid #ef9a9a; }
   .alert-info { background: var(--primary-light); color: var(--primary); border: 1px solid #90caf9; }
-  .alert-warning { background: var(--warning-light); color: #e65100; border: 1px solid #ffcc80; }
+  .alert-warning { background: var(--warning-light); color: var(--warning); border: 1px solid #ffcc80; }
 
-  .tab-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
   .tab {
     padding: 7px 14px;
     border-radius: 20px;
@@ -139,7 +160,7 @@
     transition: all 0.15s;
   }
   .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-  .tab-sub { font-size: 11px; opacity: 0.8; margin-left: 4px; }
+  .tab-sub { font-size: 11px; opacity: 0.85; margin-left: 4px; }
 
   .prog-card {
     border: 1.5px solid var(--border);
@@ -150,20 +171,44 @@
     transition: all 0.15s;
     background: #fff;
   }
-  .prog-card:hover:not(.full) { border-color: var(--primary); background: var(--primary-light); }
-  .prog-card.selected { border-color: var(--primary); background: var(--primary-light); }
-  .prog-card.full { opacity: 0.55; cursor: not-allowed; }
-  .prog-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .prog-card:hover:not(.full):not(.closed) {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .prog-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .prog-card.full,
+  .prog-card.closed {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .prog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
   .prog-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-  .prog-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .prog-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; line-height: 1.5; }
   .prog-bar-wrap { background: #e0e0e0; border-radius: 4px; height: 6px; margin-top: 6px; }
   .prog-bar { background: var(--primary); border-radius: 4px; height: 6px; transition: width 0.3s; }
-  .prog-bar.full { background: var(--danger); }
+  .prog-bar.full,
+  .prog-bar.closed { background: var(--danger); }
   .prog-count-text { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
   .badge-open { background: var(--success-light); color: var(--success); }
   .badge-full { background: var(--danger-light); color: var(--danger); }
+  .badge-closed { background: var(--danger-light); color: var(--danger); }
   .badge-selected { background: var(--primary); color: #fff; }
 
   .info-row {
@@ -186,7 +231,12 @@
     flex: 1;
   }
 
-  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -198,7 +248,7 @@
   .stat-value { font-size: 22px; font-weight: 700; color: var(--primary); }
 
   .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 980px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1120px; }
   th {
     background: var(--bg);
     padding: 9px 10px;
@@ -229,7 +279,7 @@
     text-align: center;
   }
   .hero-title { font-size: 30px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px; }
-  .hero-sub { font-size: 14px; opacity: 0.88; line-height: 1.8; margin-bottom: 28px; }
+  .hero-sub { font-size: 14px; opacity: 0.9; line-height: 1.8; margin-bottom: 28px; }
   .hero-login-btn {
     display: inline-flex;
     align-items: center;
@@ -251,7 +301,7 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.22);
   }
-  .hero-logged { font-size: 13px; opacity: 0.85; margin-top: 8px; }
+  .hero-logged { font-size: 13px; opacity: 0.9; margin-top: 8px; }
 
   .loading { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
   .spinner {
@@ -288,9 +338,48 @@
     max-width: 260px;
   }
 
-  @media (max-width: 480px) {
+  .config-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .config-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 10px;
+    background: #fafafa;
+  }
+
+  .config-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .config-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .muted-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 760px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .nav { padding: 0 14px; }
+    .config-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .nav { padding: 0 14px; height: auto; min-height: 56px; }
+    .hero-title { font-size: 24px; }
   }
 </style>
 </head>
@@ -312,7 +401,7 @@
   <div id="page-home" class="page">
     <div class="hero">
       <div class="hero-title">🌿솔가람고등학교 공방 체험학습<br>프로그램 신청</div>
-      <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램 최대 7명, 선착순 마감됩니다.</div>
+      <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램은 설정된 정원만큼 선착순 접수되며, 체험일이 지나면 자동 마감됩니다.</div>
       <div id="hero-login-area">
         <button class="hero-login-btn" onclick="showPage('login')">🔐 로그인 / 회원가입</button>
         <div class="hero-logged">신청하려면 로그인이 필요합니다</div>
@@ -360,14 +449,14 @@
       <div style="border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:14px; background:#fafafa;">
         <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:10px;">개인정보 수집·이용 동의 (필수)</div>
         <div style="font-size:12px; color:var(--text-muted); line-height:1.8; max-height:160px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; background:#fff; margin-bottom:12px;">
-          이와 관련하여 아래와 같이 귀하의 개인정보를 수집 및 이용 내용을 개인정보보호법 제15조(개인정보의 수집·이용) 및 통계법 33조(비밀의 보호 등)에 의거하여 안내 드리니 확인하여 주시기 바랍니다.<br><br>
+          이와 관련하여 아래와 같이 귀하의 개인정보를 수집 및 이용 내용을 개인정보보호법 제15조 및 통계법 제33조에 따라 안내드립니다.<br><br>
           <strong>□ 개인정보의 수집·이용 목적</strong><br>
-          솔가람고등학교 공방 체험학습 신청 접수를 위한 개인 정보 수집<br><br>
-          <strong>□ 수집하려는 개인정보의 필수 항목</strong><br>
-          성명, 재적교, 연락처, 주거 지역 등<br><br>
-          <strong>□ 개인정보의 보유 및 이용 기간</strong><br>
+          솔가람고등학교 공방 체험학습 신청 접수 및 운영 관리<br><br>
+          <strong>□ 수집 항목</strong><br>
+          성명, 재적교, 연락처, 지역, 기타 문의사항 등<br><br>
+          <strong>□ 개인정보 보유 및 이용 기간</strong><br>
           2027년 신입생 입학전형 실시 후 1개월 이내 폐기<br><br>
-          ※ 개인정보보호법에 의거하여 개인정보 수집 및 이용에 따른 동의를 거부할 수 있으나, 동의를 거부할 경우 공방 체험학습에 참가하실 수 없습니다.
+          ※ 동의를 거부할 수 있으나, 거부 시 공방 체험학습에 참가하실 수 없습니다.
         </div>
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--text);">
           <input type="checkbox" id="privacy-agree" style="width:16px; height:16px; accent-color:var(--primary); cursor:pointer; margin:0;"/>
@@ -382,7 +471,7 @@
   </div>
 
   <div id="page-mypage" class="page">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:12px; flex-wrap:wrap;">
       <div>
         <div class="section-title">내 신청 내역</div>
         <div class="section-sub" style="margin-bottom:0">신청 변경 및 취소가 가능합니다.</div>
@@ -403,9 +492,13 @@
       <div class="section-title" style="margin-bottom:0">관리자 대시보드</div>
       <button class="btn btn-sm btn-primary" onclick="downloadCSV()">📥 CSV 다운로드</button>
     </div>
+
+    <div id="admin-config-editor"></div>
+
     <div class="stat-grid" id="admin-stats"></div>
     <div class="tab-row" id="admin-period-tabs"></div>
     <div class="tab-row" id="admin-prog-tabs"></div>
+
     <div class="card" style="padding:0; overflow:hidden;">
       <div class="table-wrap">
         <table>
@@ -418,7 +511,7 @@
               <th>연락처</th>
               <th>기</th>
               <th>프로그램</th>
-              <th>기타(문의사항 등)</th>
+              <th>기타(문의사항등)</th>
               <th>신청일</th>
               <th>관리</th>
             </tr>
@@ -445,6 +538,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  getDoc,
+  setDoc,
   doc,
   updateDoc,
   deleteDoc,
@@ -461,19 +556,23 @@ const firebaseConfig = {
   measurementId: "G-GDGE8PBVV6"
 };
 
-const PROGRAMS = [
-  { id: 'A', name: '식품가공 공방', desc: '제과 제빵 체험', max: 7 },
-  { id: 'B', name: '목공 공방', desc: '도마 만들기', max: 7 },
-  { id: 'C', name: '도예 공방', desc: '키링 만들기', max: 7 },
-];
-
-const PERIODS = [
-  { id: '1', label: '1기', date: '2026년 5월 16일(금)' },
-  { id: '2', label: '2기', date: '2026년 6월 13일(금)' },
-  { id: '3', label: '3기', date: '2026년 9월 11일(금)' },
-];
+const DEFAULT_CONFIG = {
+  periods: [
+    { id: '1', label: '1기', date: '2026-05-16' },
+    { id: '2', label: '2기', date: '2026-06-13' },
+    { id: '3', label: '3기', date: '2026-09-11' }
+  ],
+  programs: [
+    { id: 'A', name: '식품가공 공방', desc: '제과 제빵 체험', max: 7 },
+    { id: 'B', name: '목공 공방', desc: '도마 만들기', max: 7 },
+    { id: 'C', name: '도예 공방', desc: '키링 만들기', max: 7 }
+  ]
+};
 
 const ADMIN_EMAIL = 'ryurim92@gmail.com';
+const PAGE_NAMES = ['home', 'login', 'signup', 'mypage', 'edit', 'admin'];
+const SAFE_RESTORE_PAGES = ['home', 'login', 'signup', 'mypage', 'admin'];
+const PAGE_STORAGE_KEY = 'fieldtrip_current_page';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -486,10 +585,42 @@ let selectedProgram = null;
 let allApplications = [];
 let adminPeriodFilter = 'all';
 let adminProgFilter = 'all';
+let appConfig = getDefaultConfig();
+let adminConfigDraft = getDefaultConfig();
+let configLoaded = false;
 
-const PAGE_NAMES = ['home', 'login', 'signup', 'mypage', 'edit', 'admin'];
-const SAFE_RESTORE_PAGES = ['home', 'login', 'signup', 'mypage', 'admin'];
-const PAGE_STORAGE_KEY = 'fieldtrip_current_page';
+function getDefaultConfig() {
+  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+}
+
+function getProgramCode(index) {
+  return index < 26 ? String.fromCharCode(65 + index) : `P${index + 1}`;
+}
+
+function normalizeConfig(raw) {
+  const next = {
+    periods: [],
+    programs: []
+  };
+
+  const rawPeriods = Array.isArray(raw?.periods) && raw.periods.length ? raw.periods : DEFAULT_CONFIG.periods;
+  const rawPrograms = Array.isArray(raw?.programs) && raw.programs.length ? raw.programs : DEFAULT_CONFIG.programs;
+
+  next.periods = rawPeriods.map((period, index) => ({
+    id: String(index + 1),
+    label: String(period?.label || `${index + 1}기`).trim() || `${index + 1}기`,
+    date: String(period?.date || '').slice(0, 10)
+  }));
+
+  next.programs = rawPrograms.map((program, index) => ({
+    id: getProgramCode(index),
+    name: String(program?.name || `프로그램 ${getProgramCode(index)}`).trim() || `프로그램 ${getProgramCode(index)}`,
+    desc: String(program?.desc || '').trim(),
+    max: Math.max(1, parseInt(program?.max, 10) || 7)
+  }));
+
+  return next;
+}
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -500,9 +631,13 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;');
 }
 
+function csvEscape(value) {
+  const text = String(value ?? '');
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
 function formatPhoneNumber(value) {
   const digits = String(value || '').replace(/\D/g, '').slice(0, 11);
-
   if (digits.length <= 3) return digits;
   if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
@@ -544,9 +679,66 @@ function attachPhoneFormatter(scope = document) {
   });
 }
 
-function csvEscape(value) {
-  const text = String(value ?? '');
-  return `"${text.replace(/"/g, '""')}"`;
+function formatDisplayDate(dateStr) {
+  if (!dateStr) return '날짜 미설정';
+  const date = new Date(dateStr + 'T00:00:00');
+  if (Number.isNaN(date.getTime())) return dateStr;
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function isDatePassed(dateStr) {
+  if (!dateStr) return false;
+  const target = new Date(dateStr + 'T00:00:00');
+  if (Number.isNaN(target.getTime())) return false;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  return today > target;
+}
+
+function getPeriods() {
+  return appConfig.periods || [];
+}
+
+function getPrograms() {
+  return appConfig.programs || [];
+}
+
+function getPeriodById(id) {
+  return getPeriods().find(period => period.id === id) || null;
+}
+
+function getProgramById(id) {
+  return getPrograms().find(program => program.id === id) || null;
+}
+
+function isPeriodClosed(periodId) {
+  const period = getPeriodById(periodId);
+  if (!period) return true;
+  return isDatePassed(period.date);
+}
+
+async function ensureConfigLoaded(force = false) {
+  if (configLoaded && !force) return;
+
+  const snap = await getDoc(doc(db, 'siteConfig', 'main'));
+  appConfig = normalizeConfig(snap.exists() ? snap.data() : DEFAULT_CONFIG);
+  adminConfigDraft = JSON.parse(JSON.stringify(appConfig));
+  configLoaded = true;
+
+  if (!getPeriodById(selectedPeriod)) {
+    selectedPeriod = getPeriods()[0]?.id || '1';
+  }
+  if (selectedProgram && !getProgramById(selectedProgram)) {
+    selectedProgram = null;
+  }
+  if (adminPeriodFilter !== 'all' && !getPeriodById(adminPeriodFilter)) {
+    adminPeriodFilter = 'all';
+  }
+  if (adminProgFilter !== 'all' && !getProgramById(adminProgFilter)) {
+    adminProgFilter = 'all';
+  }
 }
 
 function getSavedPage() {
@@ -568,7 +760,7 @@ function saveCurrentPage(name) {
   }
 }
 
-window.showPage = function(name, shouldSave = true) {
+window.showPage = async function(name, shouldSave = true) {
   if (!PAGE_NAMES.includes(name)) name = 'home';
 
   if ((name === 'mypage' || name === 'edit') && !currentUser) {
@@ -580,17 +772,15 @@ window.showPage = function(name, shouldSave = true) {
   }
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
   const pageEl = document.getElementById('page-' + name);
   if (!pageEl) return;
-
   pageEl.classList.add('active');
 
   if (shouldSave) saveCurrentPage(name);
 
-  if (name === 'home') initHome();
-  if (name === 'mypage') renderMypage();
-  if (name === 'admin') initAdmin();
+  if (name === 'home') await initHome();
+  if (name === 'mypage') await renderMypage();
+  if (name === 'admin') await initAdmin();
 };
 
 window.addEventListener('hashchange', () => {
@@ -624,7 +814,7 @@ function updateNav() {
   }
 }
 
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async user => {
   currentUser = user;
   isAdmin = user ? user.email === ADMIN_EMAIL : false;
   updateNav();
@@ -632,11 +822,11 @@ onAuthStateChanged(auth, user => {
   const currentPageEl = document.querySelector('.page.active');
   if (!currentPageEl) return;
 
-  if (currentPageEl.id === 'page-home') initHome();
-  if (currentPageEl.id === 'page-mypage') renderMypage();
-  if (currentPageEl.id === 'page-admin' && isAdmin) initAdmin();
-  if (currentPageEl.id === 'page-admin' && !isAdmin) showPage(user ? 'home' : 'login');
-  if ((currentPageEl.id === 'page-mypage' || currentPageEl.id === 'page-edit') && !user) showPage('login');
+  if (currentPageEl.id === 'page-home') await initHome();
+  if (currentPageEl.id === 'page-mypage') await renderMypage();
+  if (currentPageEl.id === 'page-admin' && isAdmin) await initAdmin();
+  if (currentPageEl.id === 'page-admin' && !isAdmin) window.showPage(user ? 'home' : 'login');
+  if ((currentPageEl.id === 'page-mypage' || currentPageEl.id === 'page-edit') && !user) window.showPage('login');
 });
 
 window.doLogin = async function() {
@@ -647,8 +837,8 @@ window.doLogin = async function() {
   try {
     await signInWithEmailAndPassword(auth, email, pw);
     al.innerHTML = '';
-    if (email === ADMIN_EMAIL) showPage('admin');
-    else showPage('home');
+    if (email === ADMIN_EMAIL) window.showPage('admin');
+    else window.showPage('home');
   } catch (e) {
     al.innerHTML = `<div class="alert alert-error">이메일 또는 비밀번호를 확인해주세요.</div>`;
   }
@@ -673,7 +863,7 @@ window.doSignup = async function() {
   try {
     await createUserWithEmailAndPassword(auth, email, pw);
     al.innerHTML = `<div class="alert alert-success">가입 완료! 로그인되었습니다.</div>`;
-    setTimeout(() => showPage('home'), 800);
+    setTimeout(() => window.showPage('home'), 800);
   } catch (e) {
     const msg = e.code === 'auth/email-already-in-use'
       ? '이미 사용 중인 이메일입니다.'
@@ -686,7 +876,7 @@ window.doSignup = async function() {
 
 window.doLogout = async function() {
   await signOut(auth);
-  showPage('home');
+  window.showPage('home');
 };
 
 async function loadApplications() {
@@ -695,19 +885,23 @@ async function loadApplications() {
 }
 
 function getCount(periodId, progId) {
-  return allApplications.filter(a => a.periodId === periodId && a.progId === progId).length;
+  return allApplications.filter(app => app.periodId === periodId && app.progId === progId).length;
 }
 
 function isFull(periodId, progId) {
-  return getCount(periodId, progId) >= PROGRAMS.find(p => p.id === progId).max;
+  const program = getProgramById(progId);
+  if (!program) return true;
+  return getCount(periodId, progId) >= program.max;
 }
 
 function getUserApp() {
   if (!currentUser) return null;
-  return allApplications.find(a => a.userId === currentUser.uid) || null;
+  return allApplications.find(app => app.userId === currentUser.uid) || null;
 }
 
 async function initHome() {
+  await ensureConfigLoaded();
+
   document.getElementById('home-loading').style.display = 'block';
   document.getElementById('home-content').style.display = 'none';
 
@@ -721,11 +915,17 @@ async function initHome() {
 }
 
 function renderPeriodTabs() {
-  document.getElementById('period-tabs').innerHTML = PERIODS.map(p =>
-    `<div class="tab ${selectedPeriod === p.id ? 'active' : ''}" onclick="selectPeriod('${p.id}')">
-      ${p.label}<span class="tab-sub">${p.date}</span>
-    </div>`
-  ).join('');
+  const tabs = getPeriods().map(period => {
+    const closed = isDatePassed(period.date);
+    return `
+      <div class="tab ${selectedPeriod === period.id ? 'active' : ''}" onclick="selectPeriod('${period.id}')">
+        ${escapeHtml(period.label)}
+        <span class="tab-sub">${formatDisplayDate(period.date)}${closed ? ' · 마감' : ''}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('period-tabs').innerHTML = tabs || `<div class="alert alert-warning">설정된 기수가 없습니다.</div>`;
 }
 
 window.selectPeriod = function(id) {
@@ -738,60 +938,80 @@ window.selectPeriod = function(id) {
 function renderPrograms() {
   const userApp = getUserApp();
   const al = document.getElementById('home-alert');
+  const period = getPeriodById(selectedPeriod);
+  const periodClosed = period ? isDatePassed(period.date) : true;
 
   if (userApp) {
-    const period = PERIODS.find(p => p.id === userApp.periodId);
-    const prog = PROGRAMS.find(p => p.id === userApp.progId);
-    al.innerHTML = `<div class="alert alert-success">✅ 신청 완료: ${period.label} - 프로그램 ${prog.id} (${prog.name})
+    const userPeriod = getPeriodById(userApp.periodId);
+    const userProgram = getProgramById(userApp.progId);
+    al.innerHTML = `<div class="alert alert-success">✅ 신청 완료: ${userPeriod?.label || '-'} - ${userProgram ? userProgram.id + ' (' + userProgram.name + ')' : '-'}
       <button class="btn btn-sm" onclick="showPage('mypage')" style="margin-left:8px;">내역 보기</button></div>`;
+  } else if (periodClosed) {
+    al.innerHTML = `<div class="alert alert-warning">선택한 ${escapeHtml(period?.label || '')}는 체험일이 지나 접수가 마감되었습니다.</div>`;
   } else {
     al.innerHTML = '';
   }
 
-  document.getElementById('program-list').innerHTML = PROGRAMS.map(prog => {
-    const cnt = getCount(selectedPeriod, prog.id);
-    const max = prog.max;
-    const full = cnt >= max;
-    const pct = Math.round((cnt / max) * 100);
-    const sel = selectedProgram === prog.id;
+  const programsHtml = getPrograms().map(program => {
+    const count = getCount(selectedPeriod, program.id);
+    const full = count >= program.max;
+    const closed = periodClosed;
+    const pct = program.max > 0 ? Math.min(100, Math.round((count / program.max) * 100)) : 0;
+    const selected = selectedProgram === program.id;
 
-    return `<div class="prog-card ${sel ? 'selected' : ''} ${full ? 'full' : ''}"
-        onclick="selectProgram('${prog.id}', ${full})">
-      <div class="prog-header">
-        <div>
-          <div class="prog-name">프로그램 ${prog.id}: ${prog.name}</div>
-          <div class="prog-desc">${prog.desc}</div>
+    let badge = '<span class="badge badge-open">신청 가능</span>';
+    if (selected) badge = '<span class="badge badge-selected">선택됨</span>';
+    if (full) badge = '<span class="badge badge-full">정원 마감</span>';
+    if (closed) badge = '<span class="badge badge-closed">기간 마감</span>';
+
+    return `
+      <div class="prog-card ${selected ? 'selected' : ''} ${full ? 'full' : ''} ${closed ? 'closed' : ''}" onclick="selectProgram('${program.id}', ${full}, ${closed})">
+        <div class="prog-header">
+          <div>
+            <div class="prog-name">프로그램 ${program.id}: ${escapeHtml(program.name)}</div>
+            <div class="prog-desc">${escapeHtml(program.desc || '설명 없음')}</div>
+          </div>
+          <div>${badge}</div>
         </div>
-        <div>${sel ? '<span class="badge badge-selected">선택됨</span>' : full ? '<span class="badge badge-full">마감</span>' : '<span class="badge badge-open">신청 가능</span>'}</div>
+        <div class="prog-bar-wrap"><div class="prog-bar ${full || closed ? 'full' : ''}" style="width:${pct}%"></div></div>
+        <div class="prog-count-text">${count} / ${program.max}명 신청</div>
       </div>
-      <div class="prog-bar-wrap"><div class="prog-bar ${full ? 'full' : ''}" style="width:${pct}%"></div></div>
-      <div class="prog-count-text">${cnt} / ${max}명 신청</div>
-    </div>`;
+    `;
   }).join('');
+
+  document.getElementById('program-list').innerHTML = programsHtml || `<div class="alert alert-warning">설정된 프로그램이 없습니다.</div>`;
 
   const applySection = document.getElementById('apply-section');
 
   if (selectedProgram && !userApp) {
+    if (periodClosed) {
+      applySection.innerHTML = `<div class="alert alert-warning">해당 기수는 체험일이 지나 접수가 마감되었습니다.</div>`;
+      applySection.style.display = '';
+      return;
+    }
+
     if (!currentUser) {
       applySection.innerHTML = `<div class="alert alert-info">신청하려면 <button class="btn btn-sm btn-primary" onclick="showPage('login')">로그인</button> 이 필요합니다.</div>`;
       applySection.style.display = '';
     } else {
-      applySection.innerHTML = `<div class="card">
-        <div class="card-title">신청자 정보</div>
-        <div class="form-group"><label>이름 *</label><input type="text" id="f-name" placeholder="홍길동"/></div>
-        <div class="form-group"><label>지역 *</label>
-          <select id="f-region">
-            <option value="">선택하세요</option>
-            <option value="광주">광주</option>
-            <option value="전남">전남</option>
-            <option value="그외">그외</option>
-          </select>
+      applySection.innerHTML = `
+        <div class="card">
+          <div class="card-title">신청자 정보</div>
+          <div class="form-group"><label>이름 *</label><input type="text" id="f-name" placeholder="홍길동"/></div>
+          <div class="form-group"><label>지역 *</label>
+            <select id="f-region">
+              <option value="">선택하세요</option>
+              <option value="광주">광주</option>
+              <option value="전남">전남</option>
+              <option value="그외">그외</option>
+            </select>
+          </div>
+          <div class="form-group"><label>소속학교 *</label><input type="text" id="f-school" placeholder="OO중학교"/></div>
+          <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000" inputmode="numeric" maxlength="13"/></div>
+          <div class="form-group"><label>기타(문의사항등)</label><textarea id="f-etcNote" placeholder="문의사항이나 전달할 내용을 입력해주세요. (선택)"></textarea></div>
+          <button class="btn btn-primary btn-block" onclick="submitApplication()">신청하기</button>
         </div>
-        <div class="form-group"><label>소속학교 *</label><input type="text" id="f-school" placeholder="OO중학교"/></div>
-        <div class="form-group"><label>연락처 *</label><input type="text" id="f-phone" placeholder="010-0000-0000" inputmode="numeric" maxlength="13"/></div>
-        <div class="form-group"><label>기타(문의사항 등)</label><textarea id="f-etcNote" placeholder="(선택)"></textarea></div>
-        <button class="btn btn-primary btn-block" onclick="submitApplication()">신청하기</button>
-      </div>`;
+      `;
       attachPhoneFormatter(applySection);
       applySection.style.display = '';
     }
@@ -800,8 +1020,8 @@ function renderPrograms() {
   }
 }
 
-window.selectProgram = function(id, full) {
-  if (full || getUserApp()) return;
+window.selectProgram = function(id, full, closed) {
+  if (full || closed || getUserApp()) return;
   selectedProgram = id;
   renderPrograms();
 };
@@ -824,6 +1044,11 @@ window.submitApplication = async function() {
     return;
   }
 
+  if (isPeriodClosed(selectedPeriod)) {
+    al.innerHTML = `<div class="alert alert-error">선택한 기수는 접수 기간이 종료되었습니다.</div>`;
+    return;
+  }
+
   if (isFull(selectedPeriod, selectedProgram)) {
     al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 방금 마감되었습니다.</div>`;
     return;
@@ -843,8 +1068,9 @@ window.submitApplication = async function() {
       etcNote,
       periodId: selectedPeriod,
       progId: selectedProgram,
-      createdAt: serverTimestamp(),
+      createdAt: serverTimestamp()
     });
+
     selectedProgram = null;
     await initHome();
   } catch (e) {
@@ -855,6 +1081,8 @@ window.submitApplication = async function() {
 };
 
 async function renderMypage() {
+  await ensureConfigLoaded();
+
   const content = document.getElementById('mypage-content');
 
   if (!currentUser) {
@@ -865,74 +1093,104 @@ async function renderMypage() {
   content.innerHTML = `<div class="loading"><div class="spinner"></div>불러오는 중...</div>`;
   await loadApplications();
 
-  const app = getUserApp();
+  const appItem = getUserApp();
 
-  if (!app) {
+  if (!appItem) {
     content.innerHTML = `<div class="card"><p style="color:var(--text-muted);font-size:14px;margin-bottom:14px">신청 내역이 없습니다.</p>
       <button class="btn btn-primary btn-sm" onclick="showPage('home')">신청하러 가기</button></div>`;
     return;
   }
 
-  const period = PERIODS.find(p => p.id === app.periodId);
-  const prog = PROGRAMS.find(p => p.id === app.progId);
-  const date = app.createdAt ? new Date(app.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
-  const etcNoteHtml = app.etcNote ? escapeHtml(app.etcNote) : '-';
+  const period = getPeriodById(appItem.periodId);
+  const program = getProgramById(appItem.progId);
+  const date = appItem.createdAt ? new Date(appItem.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
+  const etcNoteHtml = appItem.etcNote ? escapeHtml(appItem.etcNote) : '-';
+  const closed = isPeriodClosed(appItem.periodId);
 
-  content.innerHTML = `<div class="card">
-    <div class="card-title">신청 정보</div>
-    <div class="info-row"><span class="info-label">기(期)</span><span class="info-value">${period.label} (${period.date})</span></div>
-    <div class="info-row"><span class="info-label">프로그램</span><span class="info-value">프로그램 ${prog.id}: ${prog.name}</span></div>
-    <div class="info-row"><span class="info-label">이름</span><span class="info-value">${escapeHtml(app.name)}</span></div>
-    <div class="info-row"><span class="info-label">지역</span><span class="info-value">${escapeHtml(app.region)}</span></div>
-    <div class="info-row"><span class="info-label">소속학교</span><span class="info-value">${escapeHtml(app.school)}</span></div>
-    <div class="info-row"><span class="info-label">연락처</span><span class="info-value">${escapeHtml(app.phone)}</span></div>
-    <div class="info-row"><span class="info-label">기타</span><span class="info-value-note">${etcNoteHtml}</span></div>
-    <div class="info-row"><span class="info-label">신청일</span><span class="info-value">${date}</span></div>
-    <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="btn btn-primary btn-sm" onclick="showEditPage('${app.id}')">변경하기</button>
-      <button class="btn btn-danger btn-sm" onclick="cancelApp('${app.id}')">신청 취소</button>
+  content.innerHTML = `
+    ${closed ? `<div class="alert alert-warning">체험일이 지난 기수는 변경 및 취소가 제한됩니다.</div>` : ''}
+    <div class="card">
+      <div class="card-title">신청 정보</div>
+      <div class="info-row"><span class="info-label">기(期)</span><span class="info-value">${period ? escapeHtml(period.label) + ' (' + formatDisplayDate(period.date) + ')' : '-'}</span></div>
+      <div class="info-row"><span class="info-label">프로그램</span><span class="info-value">${program ? '프로그램 ' + program.id + ': ' + escapeHtml(program.name) : '-'}</span></div>
+      <div class="info-row"><span class="info-label">이름</span><span class="info-value">${escapeHtml(appItem.name)}</span></div>
+      <div class="info-row"><span class="info-label">지역</span><span class="info-value">${escapeHtml(appItem.region)}</span></div>
+      <div class="info-row"><span class="info-label">소속학교</span><span class="info-value">${escapeHtml(appItem.school)}</span></div>
+      <div class="info-row"><span class="info-label">연락처</span><span class="info-value">${escapeHtml(appItem.phone)}</span></div>
+      <div class="info-row"><span class="info-label">기타</span><span class="info-value-note">${etcNoteHtml}</span></div>
+      <div class="info-row"><span class="info-label">신청일</span><span class="info-value">${date}</span></div>
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="showEditPage('${appItem.id}')" ${closed ? 'disabled' : ''}>변경하기</button>
+        <button class="btn btn-danger btn-sm" onclick="cancelApp('${appItem.id}')" ${closed ? 'disabled' : ''}>신청 취소</button>
+      </div>
     </div>
-  </div>`;
+  `;
 }
 
 window.cancelApp = async function(docId) {
+  const appItem = allApplications.find(a => a.id === docId);
+  if (appItem && isPeriodClosed(appItem.periodId)) {
+    alert('체험일이 지난 기수는 취소할 수 없습니다.');
+    return;
+  }
+
   if (!confirm('정말로 신청을 취소하시겠습니까?')) return;
   await deleteDoc(doc(db, 'applications', docId));
-  renderMypage();
+  await renderMypage();
 };
 
 window.showEditPage = async function(docId) {
-  const app = allApplications.find(a => a.id === docId);
-  if (!app) return;
+  await ensureConfigLoaded();
+
+  const appItem = allApplications.find(a => a.id === docId);
+  if (!appItem) return;
+
+  if (isPeriodClosed(appItem.periodId)) {
+    alert('체험일이 지난 기수는 변경할 수 없습니다.');
+    return;
+  }
+
+  const periodOptions = getPeriods().map(period => `
+    <option value="${period.id}" ${appItem.periodId === period.id ? 'selected' : ''} ${isDatePassed(period.date) ? 'disabled' : ''}>
+      ${escapeHtml(period.label)} (${formatDisplayDate(period.date)})${isDatePassed(period.date) ? ' - 마감' : ''}
+    </option>
+  `).join('');
+
+  const programOptions = getPrograms().map(program => `
+    <option value="${program.id}" ${appItem.progId === program.id ? 'selected' : ''}>
+      프로그램 ${program.id}: ${escapeHtml(program.name)}
+    </option>
+  `).join('');
 
   document.getElementById('edit-content').innerHTML = `
-    <div class="card" style="max-width:520px">
+    <div class="card" style="max-width:560px">
       <div class="form-group"><label>기(期) *</label>
-        <select id="e-period">${PERIODS.map(p => `<option value="${p.id}" ${app.periodId === p.id ? 'selected' : ''}>${p.label} (${p.date})</option>`).join('')}</select>
+        <select id="e-period">${periodOptions}</select>
       </div>
       <div class="form-group"><label>프로그램 *</label>
-        <select id="e-prog">${PROGRAMS.map(p => `<option value="${p.id}" ${app.progId === p.id ? 'selected' : ''}>프로그램 ${p.id}: ${p.name}</option>`).join('')}</select>
+        <select id="e-prog">${programOptions}</select>
       </div>
-      <div class="form-group"><label>이름 *</label><input type="text" id="e-name" value="${escapeHtml(app.name)}"/></div>
+      <div class="form-group"><label>이름 *</label><input type="text" id="e-name" value="${escapeHtml(appItem.name)}"/></div>
       <div class="form-group"><label>지역 *</label>
         <select id="e-region">
-          <option value="광주" ${app.region === '광주' ? 'selected' : ''}>광주</option>
-          <option value="전남" ${app.region === '전남' ? 'selected' : ''}>전남</option>
-          <option value="그외" ${app.region === '그외' ? 'selected' : ''}>그외</option>
+          <option value="광주" ${appItem.region === '광주' ? 'selected' : ''}>광주</option>
+          <option value="전남" ${appItem.region === '전남' ? 'selected' : ''}>전남</option>
+          <option value="그외" ${appItem.region === '그외' ? 'selected' : ''}>그외</option>
         </select>
       </div>
-      <div class="form-group"><label>소속학교 *</label><input type="text" id="e-school" value="${escapeHtml(app.school)}"/></div>
-      <div class="form-group"><label>연락처 *</label><input type="text" id="e-phone" value="${formatPhoneNumber(app.phone)}" inputmode="numeric" maxlength="13"/></div>
-      <div class="form-group"><label>기타(문의사항 등)</label><textarea id="e-etcNote" placeholder="(선택)">${escapeHtml(app.etcNote || '')}</textarea></div>
+      <div class="form-group"><label>소속학교 *</label><input type="text" id="e-school" value="${escapeHtml(appItem.school)}"/></div>
+      <div class="form-group"><label>연락처 *</label><input type="text" id="e-phone" value="${formatPhoneNumber(appItem.phone)}" inputmode="numeric" maxlength="13"/></div>
+      <div class="form-group"><label>기타(문의사항등)</label><textarea id="e-etcNote" placeholder="문의사항이나 전달할 내용을 입력해주세요. (선택)">${escapeHtml(appItem.etcNote || '')}</textarea></div>
       <div id="edit-alert"></div>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-primary" style="flex:1" onclick="saveEdit('${docId}')">저장하기</button>
         <button class="btn" style="flex:1" onclick="showPage('mypage')">취소</button>
       </div>
-    </div>`;
+    </div>
+  `;
 
   attachPhoneFormatter(document.getElementById('edit-content'));
-  showPage('edit');
+  window.showPage('edit');
 };
 
 window.saveEdit = async function(docId) {
@@ -955,10 +1213,16 @@ window.saveEdit = async function(docId) {
     return;
   }
 
-  const app = allApplications.find(a => a.id === docId);
-  if (periodId !== app.periodId || progId !== app.progId) {
+  if (isPeriodClosed(periodId)) {
+    al.innerHTML = `<div class="alert alert-error">체험일이 지난 기수는 선택할 수 없습니다.</div>`;
+    return;
+  }
+
+  const currentApp = allApplications.find(a => a.id === docId);
+  if (periodId !== currentApp.periodId || progId !== currentApp.progId) {
     const others = allApplications.filter(a => a.id !== docId && a.periodId === periodId && a.progId === progId);
-    if (others.length >= PROGRAMS.find(p => p.id === progId).max) {
+    const program = getProgramById(progId);
+    if (others.length >= (program?.max || 0)) {
       al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 마감되었습니다.</div>`;
       return;
     }
@@ -974,33 +1238,249 @@ window.saveEdit = async function(docId) {
     etcNote
   });
 
-  showPage('mypage');
+  await renderMypage();
+  window.showPage('mypage');
+};
+
+function syncAdminDraftFromInputs() {
+  const periodCount = adminConfigDraft.periods.length;
+  const programCount = adminConfigDraft.programs.length;
+
+  for (let i = 0; i < periodCount; i++) {
+    const labelEl = document.getElementById(`cfg-period-label-${i}`);
+    const dateEl = document.getElementById(`cfg-period-date-${i}`);
+    if (labelEl) adminConfigDraft.periods[i].label = labelEl.value.trim();
+    if (dateEl) adminConfigDraft.periods[i].date = dateEl.value;
+  }
+
+  for (let i = 0; i < programCount; i++) {
+    const nameEl = document.getElementById(`cfg-program-name-${i}`);
+    const descEl = document.getElementById(`cfg-program-desc-${i}`);
+    const maxEl = document.getElementById(`cfg-program-max-${i}`);
+
+    if (nameEl) adminConfigDraft.programs[i].name = nameEl.value.trim();
+    if (descEl) adminConfigDraft.programs[i].desc = descEl.value.trim();
+    if (maxEl) adminConfigDraft.programs[i].max = Math.max(1, parseInt(maxEl.value, 10) || 7);
+  }
+}
+
+function resizePeriods(count) {
+  const next = [];
+  for (let i = 0; i < count; i++) {
+    const existing = adminConfigDraft.periods[i] || {};
+    next.push({
+      id: String(i + 1),
+      label: existing.label || `${i + 1}기`,
+      date: existing.date || ''
+    });
+  }
+  adminConfigDraft.periods = next;
+}
+
+function resizePrograms(count) {
+  const next = [];
+  for (let i = 0; i < count; i++) {
+    const existing = adminConfigDraft.programs[i] || {};
+    next.push({
+      id: getProgramCode(i),
+      name: existing.name || `프로그램 ${getProgramCode(i)}`,
+      desc: existing.desc || '',
+      max: Math.max(1, parseInt(existing.max, 10) || 7)
+    });
+  }
+  adminConfigDraft.programs = next;
+}
+
+function renderAdminConfigEditor() {
+  const root = document.getElementById('admin-config-editor');
+
+  const periodCount = adminConfigDraft.periods.length;
+  const programCount = adminConfigDraft.programs.length;
+
+  root.innerHTML = `
+    <div class="card">
+      <div class="card-title">운영 설정</div>
+      <div id="admin-config-alert"></div>
+
+      <div class="config-section-title">기수 설정</div>
+      <div class="config-grid-2" style="margin-bottom:12px;">
+        <div class="form-group">
+          <label>기수 개수</label>
+          <input type="number" id="cfg-period-count" min="1" max="12" value="${periodCount}" />
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <button class="btn" onclick="updateAdminPeriodCount()">기수 개수 적용</button>
+        </div>
+      </div>
+
+      <div id="cfg-period-list">
+        ${adminConfigDraft.periods.map((period, i) => `
+          <div class="config-item">
+            <div class="config-section-title">기수 ${i + 1}</div>
+            <div class="config-grid-2">
+              <div class="form-group">
+                <label>기수 이름</label>
+                <input type="text" id="cfg-period-label-${i}" value="${escapeHtml(period.label)}" placeholder="${i + 1}기" />
+              </div>
+              <div class="form-group">
+                <label>체험일</label>
+                <input type="date" id="cfg-period-date-${i}" value="${escapeHtml(period.date)}" />
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="config-section-title" style="margin-top:18px;">프로그램 설정</div>
+      <div class="config-grid-2" style="margin-bottom:12px;">
+        <div class="form-group">
+          <label>프로그램 개수</label>
+          <input type="number" id="cfg-program-count" min="1" max="12" value="${programCount}" />
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <button class="btn" onclick="updateAdminProgramCount()">프로그램 개수 적용</button>
+        </div>
+      </div>
+
+      <div id="cfg-program-list">
+        ${adminConfigDraft.programs.map((program, i) => `
+          <div class="config-item">
+            <div class="config-section-title">프로그램 ${program.id}</div>
+            <div class="form-group">
+              <label>프로그램 제목</label>
+              <input type="text" id="cfg-program-name-${i}" value="${escapeHtml(program.name)}" placeholder="프로그램 제목" />
+            </div>
+            <div class="form-group">
+              <label>프로그램 내용</label>
+              <textarea id="cfg-program-desc-${i}" placeholder="프로그램 설명">${escapeHtml(program.desc)}</textarea>
+            </div>
+            <div class="form-group">
+              <label>정원</label>
+              <input type="number" id="cfg-program-max-${i}" min="1" max="999" value="${program.max}" />
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="muted-text">※ 설정을 저장하면 즉시 신청 페이지와 관리자 페이지에 반영됩니다. 기존 신청 데이터는 유지되지만, 기수/프로그램 구조를 크게 바꾸면 기존 신청 데이터 표시가 달라질 수 있습니다.</div>
+
+      <div class="config-actions">
+        <button class="btn btn-primary" onclick="saveAdminSettings()">설정 저장</button>
+        <button class="btn" onclick="resetAdminSettings()">되돌리기</button>
+      </div>
+    </div>
+  `;
+}
+
+window.updateAdminPeriodCount = function() {
+  syncAdminDraftFromInputs();
+  const input = document.getElementById('cfg-period-count');
+  let count = parseInt(input.value, 10) || 1;
+  count = Math.min(12, Math.max(1, count));
+  resizePeriods(count);
+  renderAdminConfigEditor();
+};
+
+window.updateAdminProgramCount = function() {
+  syncAdminDraftFromInputs();
+  const input = document.getElementById('cfg-program-count');
+  let count = parseInt(input.value, 10) || 1;
+  count = Math.min(12, Math.max(1, count));
+  resizePrograms(count);
+  renderAdminConfigEditor();
+};
+
+window.resetAdminSettings = function() {
+  adminConfigDraft = JSON.parse(JSON.stringify(appConfig));
+  renderAdminConfigEditor();
+};
+
+window.saveAdminSettings = async function() {
+  syncAdminDraftFromInputs();
+
+  const alertEl = document.getElementById('admin-config-alert');
+
+  for (let i = 0; i < adminConfigDraft.periods.length; i++) {
+    const period = adminConfigDraft.periods[i];
+    if (!period.label.trim()) {
+      alertEl.innerHTML = `<div class="alert alert-error">${i + 1}번째 기수 이름을 입력해주세요.</div>`;
+      return;
+    }
+    if (!period.date) {
+      alertEl.innerHTML = `<div class="alert alert-error">${period.label || (i + 1) + '기'}의 체험일을 입력해주세요.</div>`;
+      return;
+    }
+  }
+
+  for (let i = 0; i < adminConfigDraft.programs.length; i++) {
+    const program = adminConfigDraft.programs[i];
+    if (!program.name.trim()) {
+      alertEl.innerHTML = `<div class="alert alert-error">${i + 1}번째 프로그램 제목을 입력해주세요.</div>`;
+      return;
+    }
+    if (!program.max || program.max < 1) {
+      alertEl.innerHTML = `<div class="alert alert-error">${program.name || (i + 1) + '번째 프로그램'}의 정원을 1명 이상으로 입력해주세요.</div>`;
+      return;
+    }
+  }
+
+  const normalized = normalizeConfig(adminConfigDraft);
+
+  try {
+    await setDoc(doc(db, 'siteConfig', 'main'), normalized);
+    appConfig = normalized;
+    adminConfigDraft = JSON.parse(JSON.stringify(appConfig));
+    configLoaded = true;
+
+    if (!getPeriodById(selectedPeriod)) selectedPeriod = getPeriods()[0]?.id || '1';
+    if (selectedProgram && !getProgramById(selectedProgram)) selectedProgram = null;
+    if (adminPeriodFilter !== 'all' && !getPeriodById(adminPeriodFilter)) adminPeriodFilter = 'all';
+    if (adminProgFilter !== 'all' && !getProgramById(adminProgFilter)) adminProgFilter = 'all';
+
+    alertEl.innerHTML = `<div class="alert alert-success">운영 설정이 저장되었습니다.</div>`;
+
+    if (document.getElementById('page-home').classList.contains('active')) {
+      await initHome();
+    }
+    await initAdmin();
+  } catch (e) {
+    alertEl.innerHTML = `<div class="alert alert-error">설정 저장 중 오류가 발생했습니다.</div>`;
+  }
 };
 
 async function initAdmin() {
+  await ensureConfigLoaded();
   await loadApplications();
   renderAdmin();
 }
 
 function renderAdmin() {
-  const apps = allApplications;
+  renderAdminConfigEditor();
 
-  const statGrid = document.getElementById('admin-stats');
-  statGrid.innerHTML =
+  const apps = allApplications;
+  const periodStats = getPeriods().map(period =>
+    `<div class="stat-card"><div class="stat-label">${escapeHtml(period.label)}</div><div class="stat-value">${apps.filter(app => app.periodId === period.id).length}</div></div>`
+  ).join('');
+
+  document.getElementById('admin-stats').innerHTML =
     `<div class="stat-card"><div class="stat-label">전체</div><div class="stat-value">${apps.length}</div></div>` +
-    PERIODS.map(p => `<div class="stat-card"><div class="stat-label">${p.label}</div><div class="stat-value">${apps.filter(a => a.periodId === p.id).length}</div></div>`).join('');
+    periodStats;
 
   document.getElementById('admin-period-tabs').innerHTML =
     `<div class="tab ${adminPeriodFilter === 'all' ? 'active' : ''}" onclick="setAdminFilter('period','all')">전체 기수</div>` +
-    PERIODS.map(p => `<div class="tab ${adminPeriodFilter === p.id ? 'active' : ''}" onclick="setAdminFilter('period','${p.id}')">${p.label}</div>`).join('');
+    getPeriods().map(period =>
+      `<div class="tab ${adminPeriodFilter === period.id ? 'active' : ''}" onclick="setAdminFilter('period','${period.id}')">${escapeHtml(period.label)}</div>`
+    ).join('');
 
   document.getElementById('admin-prog-tabs').innerHTML =
     `<div class="tab ${adminProgFilter === 'all' ? 'active' : ''}" onclick="setAdminFilter('prog','all')">전체 프로그램</div>` +
-    PROGRAMS.map(p => `<div class="tab ${adminProgFilter === p.id ? 'active' : ''}" onclick="setAdminFilter('prog','${p.id}')">${p.id}: ${p.name}</div>`).join('');
+    getPrograms().map(program =>
+      `<div class="tab ${adminProgFilter === program.id ? 'active' : ''}" onclick="setAdminFilter('prog','${program.id}')">${program.id}: ${escapeHtml(program.name)}</div>`
+    ).join('');
 
   let filtered = apps;
-  if (adminPeriodFilter !== 'all') filtered = filtered.filter(a => a.periodId === adminPeriodFilter);
-  if (adminProgFilter !== 'all') filtered = filtered.filter(a => a.progId === adminProgFilter);
+  if (adminPeriodFilter !== 'all') filtered = filtered.filter(app => app.periodId === adminPeriodFilter);
+  if (adminProgFilter !== 'all') filtered = filtered.filter(app => app.progId === adminProgFilter);
 
   const tbody = document.getElementById('admin-tbody');
   if (filtered.length === 0) {
@@ -1008,23 +1488,25 @@ function renderAdmin() {
     return;
   }
 
-  tbody.innerHTML = filtered.map((a, i) => {
-    const period = PERIODS.find(p => p.id === a.periodId);
-    const prog = PROGRAMS.find(p => p.id === a.progId);
-    const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
+  tbody.innerHTML = filtered.map((appItem, i) => {
+    const period = getPeriodById(appItem.periodId);
+    const program = getProgramById(appItem.progId);
+    const date = appItem.createdAt ? new Date(appItem.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
 
-    return `<tr>
-      <td>${i + 1}</td>
-      <td>${escapeHtml(a.name)}</td>
-      <td>${escapeHtml(a.region)}</td>
-      <td>${escapeHtml(a.school)}</td>
-      <td>${escapeHtml(a.phone)}</td>
-      <td>${period?.label || '-'}</td>
-      <td>${prog ? prog.id + ': ' + prog.name : '-'}</td>
-      <td><div class="admin-note">${escapeHtml(a.etcNote || '')}</div></td>
-      <td>${date}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="adminDelete('${a.id}')">삭제</button></td>
-    </tr>`;
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(appItem.name)}</td>
+        <td>${escapeHtml(appItem.region)}</td>
+        <td>${escapeHtml(appItem.school)}</td>
+        <td>${escapeHtml(appItem.phone)}</td>
+        <td>${period ? escapeHtml(period.label) : '-'}</td>
+        <td>${program ? program.id + ': ' + escapeHtml(program.name) : '-'}</td>
+        <td><div class="admin-note">${escapeHtml(appItem.etcNote || '')}</div></td>
+        <td>${date}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="adminDelete('${appItem.id}')">삭제</button></td>
+      </tr>
+    `;
   }).join('');
 }
 
@@ -1046,22 +1528,22 @@ window.downloadCSV = function() {
     return;
   }
 
-  const header = ['번호', '이름', '지역', '소속학교', '연락처', '기', '날짜', '프로그램', '기타(문의사항 등)', '신청일'];
-  const rows = allApplications.map((a, i) => {
-    const period = PERIODS.find(p => p.id === a.periodId);
-    const prog = PROGRAMS.find(p => p.id === a.progId);
-    const date = a.createdAt ? new Date(a.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
+  const header = ['번호', '이름', '지역', '소속학교', '연락처', '기', '날짜', '프로그램', '기타(문의사항등)', '신청일'];
+  const rows = allApplications.map((appItem, i) => {
+    const period = getPeriodById(appItem.periodId);
+    const program = getProgramById(appItem.progId);
+    const date = appItem.createdAt ? new Date(appItem.createdAt.seconds * 1000).toLocaleDateString('ko-KR') : '-';
 
     return [
       i + 1,
-      a.name,
-      a.region,
-      a.school,
-      a.phone,
+      appItem.name,
+      appItem.region,
+      appItem.school,
+      appItem.phone,
       period?.label || '-',
-      period?.date || '-',
-      prog ? prog.id + ': ' + prog.name : '-',
-      a.etcNote || '',
+      period ? formatDisplayDate(period.date) : '-',
+      program ? `${program.id}: ${program.name}` : '-',
+      appItem.etcNote || '',
       date
     ].map(csvEscape).join(',');
   });
