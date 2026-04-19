@@ -674,6 +674,7 @@
     </div>
 
     <div id="admin-config-editor"></div>
+    <div id="admin-password-box"></div>
 
     <div class="stat-grid" id="admin-stats"></div>
     <div class="tab-row" id="admin-period-tabs"></div>
@@ -711,7 +712,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore,
@@ -1528,14 +1532,15 @@ window.saveEdit = async function(docId) {
   const school = document.getElementById('e-school').value.trim();
   const phone = document.getElementById('e-phone').value.trim();
   const etcNote = document.getElementById('e-etcNote').value.trim();
-  const al = document.getElementById('edit-alert');
 
   const errors = getApplicationValidationErrors({ name, region, school, phone });
   const hasValidationError = applyFieldValidation('e', errors);
   if (hasValidationError) return;
 
+  const formErrorBox = document.getElementById('e-form-error');
+
   if (isPeriodClosed(periodId)) {
-    if (al) al.innerHTML = `<div class="alert alert-error">체험일이 지난 기수는 선택할 수 없습니다.</div>`;
+    if (formErrorBox) formErrorBox.innerHTML = `<div class="alert alert-error">체험일이 지난 기수는 선택할 수 없습니다.</div>`;
     return;
   }
 
@@ -1544,7 +1549,7 @@ window.saveEdit = async function(docId) {
     const others = allApplications.filter(a => a.id !== docId && a.periodId === periodId && a.progId === progId);
     const program = getProgramById(progId);
     if (others.length >= (program?.max || 0)) {
-      if (al) al.innerHTML = `<div class="alert alert-error">선택한 프로그램이 마감되었습니다.</div>`;
+      if (formErrorBox) formErrorBox.innerHTML = `<div class="alert alert-error">선택한 프로그램이 마감되었습니다.</div>`;
       return;
     }
   }
@@ -1692,6 +1697,98 @@ function renderAdminConfigEditor() {
   `;
 }
 
+function renderAdminPasswordBox() {
+  const box = document.getElementById('admin-password-box');
+  if (!box) return;
+
+  box.innerHTML = `
+    <div class="card">
+      <div class="card-title">관리자 비밀번호 변경</div>
+      <div class="form-group">
+        <label>현재 비밀번호</label>
+        <input type="password" id="admin-current-pw" placeholder="현재 비밀번호 입력" />
+      </div>
+      <div class="form-group">
+        <label>새 비밀번호</label>
+        <input type="password" id="admin-new-pw" placeholder="새 비밀번호 (6자 이상)" />
+      </div>
+      <div class="form-group">
+        <label>새 비밀번호 확인</label>
+        <input type="password" id="admin-new-pw2" placeholder="새 비밀번호 다시 입력" />
+      </div>
+      <div id="admin-password-alert"></div>
+      <button class="btn btn-primary" onclick="changeAdminPassword()">비밀번호 변경</button>
+    </div>
+  `;
+}
+
+window.changeAdminPassword = async function() {
+  const alertBox = document.getElementById('admin-password-alert');
+  const currentPw = document.getElementById('admin-current-pw').value;
+  const newPw = document.getElementById('admin-new-pw').value;
+  const newPw2 = document.getElementById('admin-new-pw2').value;
+
+  alertBox.innerHTML = '';
+
+  if (!currentUser || !isAdmin) {
+    alertBox.innerHTML = `<div class="alert alert-error">관리자 로그인 상태에서만 변경할 수 있습니다.</div>`;
+    return;
+  }
+
+  if (!currentPw) {
+    alertBox.innerHTML = `<div class="alert alert-error">현재 비밀번호를 입력해주세요.</div>`;
+    return;
+  }
+
+  if (!newPw) {
+    alertBox.innerHTML = `<div class="alert alert-error">새 비밀번호를 입력해주세요.</div>`;
+    return;
+  }
+
+  if (newPw.length < 6) {
+    alertBox.innerHTML = `<div class="alert alert-error">새 비밀번호는 6자 이상이어야 합니다.</div>`;
+    return;
+  }
+
+  if (newPw !== newPw2) {
+    alertBox.innerHTML = `<div class="alert alert-error">새 비밀번호와 비밀번호 확인이 일치하지 않습니다.</div>`;
+    return;
+  }
+
+  if (currentPw === newPw) {
+    alertBox.innerHTML = `<div class="alert alert-error">새 비밀번호는 현재 비밀번호와 다르게 입력해주세요.</div>`;
+    return;
+  }
+
+  try {
+    const user = auth.currentUser;
+    const credential = EmailAuthProvider.credential(user.email, currentPw);
+
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, newPw);
+
+    document.getElementById('admin-current-pw').value = '';
+    document.getElementById('admin-new-pw').value = '';
+    document.getElementById('admin-new-pw2').value = '';
+
+    alertBox.innerHTML = `<div class="alert alert-success">관리자 비밀번호가 변경되었습니다.</div>`;
+  } catch (error) {
+    let message = '비밀번호 변경 중 오류가 발생했습니다.';
+
+    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+      message = '현재 비밀번호가 올바르지 않습니다.';
+    } else if (error.code === 'auth/weak-password') {
+      message = '새 비밀번호는 더 강하게 설정해주세요.';
+    } else if (error.code === 'auth/too-many-requests') {
+      message = '시도가 너무 많습니다. 잠시 후 다시 시도해주세요.';
+    } else if (error.code === 'auth/requires-recent-login') {
+      message = '보안을 위해 다시 로그인한 후 시도해주세요.';
+    }
+
+    alertBox.innerHTML = `<div class="alert alert-error">${message}</div>`;
+  }
+};
+
 window.updateAdminPeriodCount = function() {
   syncAdminDraftFromInputs();
   const input = document.getElementById('cfg-period-count');
@@ -1774,6 +1871,7 @@ async function initAdmin() {
 }
 
 function renderAdmin() {
+  renderAdminPasswordBox();
   renderAdminConfigEditor();
 
   const apps = allApplications;
