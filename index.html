@@ -581,7 +581,7 @@
   <div id="page-home" class="page">
     <div class="hero">
       <div class="hero-title">🌿솔가람고등학교 공방 체험학습<br>프로그램 신청</div>
-      <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램은 설정된 정원만큼 선착순 접수되며, 체험일이 지나면 자동 마감됩니다.</div>
+      <div class="hero-sub">기(期)와 프로그램을 선택하고 신청서를 작성해주세요.<br>각 프로그램은 설정된 정원만큼 선착순 접수되며, 관리자 페이지에서 설정한 마감 기준일에 따라 자동 마감됩니다.</div>
       <div id="hero-login-area">
         <button class="hero-login-btn" onclick="showPage('login')">🔐 로그인 / 회원가입</button>
         <div class="hero-logged">신청하려면 로그인이 필요합니다</div>
@@ -741,6 +741,7 @@ const firebaseConfig = {
 };
 
 const DEFAULT_CONFIG = {
+  closeDaysBefore: 1,
   periods: [
     { id: '1', label: '1기', date: '2026-05-16' },
     { id: '2', label: '2기', date: '2026-06-13' },
@@ -782,10 +783,11 @@ function getProgramCode(index) {
 }
 
 function normalizeConfig(raw) {
-  const next = { periods: [], programs: [] };
+  const next = { closeDaysBefore: 1, periods: [], programs: [] };
 
   const rawPeriods = Array.isArray(raw?.periods) && raw.periods.length ? raw.periods : DEFAULT_CONFIG.periods;
   const rawPrograms = Array.isArray(raw?.programs) && raw.programs.length ? raw.programs : DEFAULT_CONFIG.programs;
+  next.closeDaysBefore = Math.max(0, parseInt(raw?.closeDaysBefore, 10) || 0);
 
   next.periods = rawPeriods.map((period, index) => ({
     id: String(index + 1),
@@ -978,6 +980,34 @@ function formatDisplayDate(dateStr) {
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
+function getCloseDaysBefore() {
+  return Math.max(0, parseInt(appConfig?.closeDaysBefore, 10) || 0);
+}
+
+function subtractDays(dateStr, days) {
+  if (!dateStr) return null;
+  const date = new Date(dateStr + 'T00:00:00');
+  if (Number.isNaN(date.getTime())) return null;
+  date.setDate(date.getDate() - days);
+  return date;
+}
+
+function formatDateObject(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '날짜 미설정';
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function getCloseStartDate(periodId) {
+  const period = getPeriodById(periodId);
+  if (!period?.date) return null;
+  return subtractDays(period.date, getCloseDaysBefore());
+}
+
+function getCloseStartDateText(periodId) {
+  const date = getCloseStartDate(periodId);
+  return date ? formatDateObject(date) : '날짜 미설정';
+}
+
 function isDatePassed(dateStr) {
   if (!dateStr) return false;
   const target = new Date(dateStr + 'T00:00:00');
@@ -1007,8 +1037,15 @@ function getProgramById(id) {
 
 function isPeriodClosed(periodId) {
   const period = getPeriodById(periodId);
-  if (!period) return true;
-  return isDatePassed(period.date);
+  if (!period?.date) return true;
+
+  const closeDate = getCloseStartDate(periodId);
+  if (!closeDate) return true;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  return today >= closeDate;
 }
 
 async function ensureConfigLoaded(force = false) {
@@ -1200,11 +1237,11 @@ async function initHome() {
 
 function renderPeriodTabs() {
   const tabs = getPeriods().map(period => {
-    const closed = isDatePassed(period.date);
+    const closed = isPeriodClosed(period.id);
     return `
       <div class="tab ${selectedPeriod === period.id ? 'active' : ''}" onclick="selectPeriod('${period.id}')">
         ${escapeHtml(period.label)}
-        <span class="tab-sub">${formatDisplayDate(period.date)}${closed ? ' · 마감' : ''}</span>
+        <span class="tab-sub">체험일 ${formatDisplayDate(period.date)} · 접수마감 ${getCloseStartDateText(period.id)}${closed ? ' · 마감' : ''}</span>
       </div>
     `;
   }).join('');
@@ -1223,7 +1260,7 @@ function renderPrograms() {
   const userApp = getUserApp();
   const al = document.getElementById('home-alert');
   const period = getPeriodById(selectedPeriod);
-  const periodClosed = period ? isDatePassed(period.date) : true;
+  const periodClosed = period ? isPeriodClosed(period.id) : true;
 
   if (userApp) {
     const userPeriod = getPeriodById(userApp.periodId);
@@ -1231,7 +1268,7 @@ function renderPrograms() {
     al.innerHTML = `<div class="alert alert-success">✅ 신청 완료: ${userPeriod?.label || '-'} - ${userProgram ? userProgram.id + ' (' + userProgram.name + ')' : '-'}
       <button class="btn btn-sm" onclick="showPage('mypage')" style="margin-left:8px;">내역 보기</button></div>`;
   } else if (periodClosed) {
-    al.innerHTML = `<div class="alert alert-warning">선택한 ${escapeHtml(period?.label || '')}는 체험일이 지나 접수가 마감되었습니다.</div>`;
+    al.innerHTML = `<div class="alert alert-warning">선택한 ${escapeHtml(period?.label || '')}는 접수 마감일(${getCloseStartDateText(period?.id)})이 되어 신청이 마감되었습니다.</div>`;
   } else {
     al.innerHTML = '';
   }
@@ -1269,7 +1306,7 @@ function renderPrograms() {
 
   if (selectedProgram && !userApp) {
     if (periodClosed) {
-      applySection.innerHTML = `<div class="alert alert-warning">해당 기수는 체험일이 지나 접수가 마감되었습니다.</div>`;
+      applySection.innerHTML = `<div class="alert alert-warning">해당 기수는 접수 마감일(${getCloseStartDateText(selectedPeriod)})이 되어 신청이 마감되었습니다.</div>`;
       applySection.style.display = '';
       return;
     }
@@ -1411,7 +1448,7 @@ async function renderMypage() {
   const closed = isPeriodClosed(appItem.periodId);
 
   content.innerHTML = `
-    ${closed ? `<div class="alert alert-warning">체험일이 지난 기수는 변경 및 취소가 제한됩니다.</div>` : ''}
+    ${closed ? `<div class="alert alert-warning">접수 마감된 기수는 변경 및 취소가 제한됩니다.</div>` : ''}
     <div class="card">
       <div class="card-title">신청 정보</div>
       <div class="info-row"><span class="info-label">기(期)</span><span class="info-value">${period ? escapeHtml(period.label) + ' (' + formatDisplayDate(period.date) + ')' : '-'}</span></div>
@@ -1433,7 +1470,7 @@ async function renderMypage() {
 window.cancelApp = async function(docId) {
   const appItem = allApplications.find(a => a.id === docId);
   if (appItem && isPeriodClosed(appItem.periodId)) {
-    alert('체험일이 지난 기수는 취소할 수 없습니다.');
+    alert('접수 마감된 기수는 취소할 수 없습니다.');
     return;
   }
 
@@ -1449,13 +1486,13 @@ window.showEditPage = async function(docId) {
   if (!appItem) return;
 
   if (isPeriodClosed(appItem.periodId)) {
-    alert('체험일이 지난 기수는 변경할 수 없습니다.');
+    alert('접수 마감된 기수는 변경할 수 없습니다.');
     return;
   }
 
   const periodOptions = getPeriods().map(period => `
-    <option value="${period.id}" ${appItem.periodId === period.id ? 'selected' : ''} ${isDatePassed(period.date) ? 'disabled' : ''}>
-      ${escapeHtml(period.label)} (${formatDisplayDate(period.date)})${isDatePassed(period.date) ? ' - 마감' : ''}
+    <option value="${period.id}" ${appItem.periodId === period.id ? 'selected' : ''} ${isPeriodClosed(period.id) ? 'disabled' : ''}>
+      ${escapeHtml(period.label)} (체험일 ${formatDisplayDate(period.date)} / 접수마감 ${getCloseStartDateText(period.id)})${isPeriodClosed(period.id) ? ' - 마감' : ''}
     </option>
   `).join('');
 
@@ -1540,7 +1577,7 @@ window.saveEdit = async function(docId) {
   const formErrorBox = document.getElementById('e-form-error');
 
   if (isPeriodClosed(periodId)) {
-    if (formErrorBox) formErrorBox.innerHTML = `<div class="alert alert-error">체험일이 지난 기수는 선택할 수 없습니다.</div>`;
+    if (formErrorBox) formErrorBox.innerHTML = `<div class="alert alert-error">접수 마감된 기수는 선택할 수 없습니다.</div>`;
     return;
   }
 
@@ -1571,6 +1608,11 @@ window.saveEdit = async function(docId) {
 function syncAdminDraftFromInputs() {
   const periodCount = adminConfigDraft.periods.length;
   const programCount = adminConfigDraft.programs.length;
+  const closeDaysBeforeEl = document.getElementById('cfg-close-days-before');
+
+  if (closeDaysBeforeEl) {
+    adminConfigDraft.closeDaysBefore = Math.max(0, parseInt(closeDaysBeforeEl.value, 10) || 0);
+  }
 
   for (let i = 0; i < periodCount; i++) {
     const labelEl = document.getElementById(`cfg-period-label-${i}`);
@@ -1626,6 +1668,17 @@ function renderAdminConfigEditor() {
     <div class="card">
       <div class="card-title">운영 설정</div>
       <div id="admin-config-alert"></div>
+
+      <div class="config-section-title">접수 마감 설정</div>
+      <div class="config-grid-2" style="margin-bottom:18px;">
+        <div class="form-group">
+          <label>체험일 기준 접수 마감 시작일</label>
+          <input type="number" id="cfg-close-days-before" min="0" max="365" value="${adminConfigDraft.closeDaysBefore ?? 1}" />
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <div class="muted-text">0 입력: 체험일 당일부터 마감<br>1 입력: 체험일 1일 전부터 마감<br>14 입력: 체험일 14일 전부터 마감</div>
+        </div>
+      </div>
 
       <div class="config-section-title">기수 설정</div>
       <div class="config-grid-2" style="margin-bottom:12px;">
@@ -1687,6 +1740,7 @@ function renderAdminConfigEditor() {
         `).join('')}
       </div>
 
+      <div class="muted-text">※ 접수 마감은 입력한 값 기준으로 모든 기수에 동일 적용됩니다. 예: 14 입력 시 체험일 14일 전부터 마감됩니다.</div>
       <div class="muted-text">※ 설정을 저장하면 즉시 신청 페이지와 관리자 페이지에 반영됩니다. 기존 신청 데이터는 유지되지만, 기수/프로그램 구조를 크게 바꾸면 기존 신청 데이터 표시가 달라질 수 있습니다.</div>
 
       <div class="config-actions">
@@ -1815,6 +1869,11 @@ window.resetAdminSettings = function() {
 window.saveAdminSettings = async function() {
   syncAdminDraftFromInputs();
   const alertEl = document.getElementById('admin-config-alert');
+
+  if (adminConfigDraft.closeDaysBefore < 0) {
+    alertEl.innerHTML = `<div class="alert alert-error">접수 마감 기준일은 0 이상으로 입력해주세요.</div>`;
+    return;
+  }
 
   for (let i = 0; i < adminConfigDraft.periods.length; i++) {
     const period = adminConfigDraft.periods[i];
